@@ -1,0 +1,74 @@
+<view class="page-shell settings-page">
+  <view class="card profile-card">
+    <view class="profile-head">
+      <view class="section-title">我的资料</view>
+      <view class="section-tip">点击头像可更换</view>
+    </view>
+
+    <view class="profile-row">
+      <button class="avatar-btn" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">
+        <image class="avatar-img" src="{{profile.avatarUrl}}" mode="aspectFill" />
+        <view class="avatar-badge">更换</view>
+      </button>
+
+      <view class="profile-main">
+        <view class="nickname-label">昵称设置</view>
+        <input
+          class="nickname-input"
+          type="nickname"
+          maxlength="16"
+          value="{{profile.nickname}}"
+          placeholder="请输入昵称"
+          bindinput="onNicknameInput"
+          bindblur="onNicknameBlur"
+          bindconfirm="onNicknameBlur"
+          confirm-type="done"
+        />
+        <view class="nickname-tip">昵称仅保存在本机，不上传云端。</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="favorite-title-row">
+      <view>
+        <view class="section-title">我的收藏</view>
+        <view class="section-tip">已收藏 {{favoriteCount}} 个剧目</view>
+      </view>
+      <button class="btn-outline tiny" bindtap="openFavoritesPage">查看全部</button>
+    </view>
+
+    <view wx:if="{{favoritePreview.length === 0}}" class="empty">暂无收藏剧目，去剧目详情页点右上角收藏。</view>
+
+    <block wx:for="{{favoritePreview}}" wx:for-item="play" wx:key="id">
+      <view class="favorite-item" data-play-id="{{play.id}}" bindtap="openPlayDetail">
+        <image class="favorite-cover" src="{{play.cover}}" mode="aspectFill" />
+        <view class="favorite-main">
+          <view class="favorite-name">{{play.title}}</view>
+          <view class="favorite-tags">
+            <text class="tag" wx:for="{{play.tags}}" wx:for-item="tag" wx:key="*this">{{tag}}</text>
+          </view>
+        </view>
+      </view>
+    </block>
+  </view>
+
+  <view class="card system-card">
+    <view class="section-title">系统设置</view>
+
+    <view class="setting-row">
+      <view class="setting-main">
+        <view class="setting-name">虚拟体验 BGM</view>
+        <view class="setting-desc">默认开启，仅用于体验页前台播放</view>
+      </view>
+      <switch color="#5A3C24" checked="{{bgmEnabled}}" bindchange="onBgmSwitchChange" />
+    </view>
+
+    <view class="divider"></view>
+
+    <view class="about-text">本应用仅用于唐山皮影内容展示与播放，不提供用户提问、评论、分享能力。</view>
+    <view class="about-text">除收藏与设置外，不存储额外用户内容；体验卡片仅在用户主动保存时写入系统相册。</view>
+  </view>
+
+  <audio-mini-bar></audio-mini-bar>
+</view>

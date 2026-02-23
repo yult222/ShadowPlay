@@ -1,0 +1,52 @@
+.plays-page {
+  padding-bottom: 240rpx;
+}
+
+.hero-title {
+  font-size: 38rpx;
+  font-weight: 700;
+  color: #2f2317;
+}
+
+.hero-sub {
+  margin-top: 10rpx;
+  font-size: 24rpx;
+  color: #816f5d;
+  line-height: 1.6;
+}
+
+.play-card {
+  display: flex;
+  gap: 18rpx;
+}
+
+.play-cover {
+  width: 180rpx;
+  height: 180rpx;
+  border-radius: 16rpx;
+  background: #e7d8c8;
+}
+
+.play-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.play-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #302318;
+  line-height: 1.35;
+}
+
+.play-tag-row {
+  margin-top: 12rpx;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.play-meta {
+  margin-top: 10rpx;
+  font-size: 24rpx;
+  color: #816f5e;
+}

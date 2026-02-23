@@ -1,0 +1,21 @@
+<view class="page-shell experience-page">
+  <view class="card hero">
+    <view class="hero-title">虚拟体验</view>
+    <view class="hero-sub">Phase 0 占位页</view>
+    <view class="hero-desc">
+      体验关卡正在制作中。当前页面已实现：进入自动暂停剧目音频，退出自动恢复到进入前的音轨与进度。
+    </view>
+  </view>
+
+  <view class="card tips-card">
+    <view class="tips-title">已预留的后续能力</view>
+    <view class="tip-item">1. 数据驱动关卡列表（数量不写死）</view>
+    <view class="tip-item">2. 体验页前台 BGM（受设置页开关控制）</view>
+    <view class="tip-item">3. 通关后生成皮影卡片并允许保存到相册</view>
+
+    <button class="btn-outline go-play" bindtap="goToPlaysTab">返回经典剧目继续收听</button>
+  </view>
+
+  <audio-mini-bar></audio-mini-bar>
+</view>
+

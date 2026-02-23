@@ -1,0 +1,24 @@
+<view class="page-shell favorites-page">
+  <view wx:if="{{favoritePlays.length === 0}}" class="card empty">暂无收藏内容。</view>
+
+  <block wx:for="{{favoritePlays}}" wx:for-item="play" wx:key="id">
+    <view class="card favorite-card">
+      <image class="cover" src="{{play.cover}}" mode="aspectFill" />
+
+      <view class="main">
+        <view class="title">{{play.title}}</view>
+        <view class="tags">
+          <text class="tag" wx:for="{{play.tags}}" wx:for-item="tag" wx:key="*this">{{tag}}</text>
+        </view>
+
+        <view class="actions">
+          <button class="btn-outline tiny" data-play-id="{{play.id}}" bindtap="openPlayDetail">查看详情</button>
+          <button class="btn-outline tiny danger" data-play-id="{{play.id}}" bindtap="removeFavorite">取消收藏</button>
+        </view>
+      </view>
+    </view>
+  </block>
+
+  <audio-mini-bar></audio-mini-bar>
+</view>
+

@@ -1,0 +1,15 @@
+<view wx:if="{{visible}}" class="audio-mini-bar" bindtap="openPlayDetail">
+  <view class="meta">
+    <view class="title-line">{{title}}</view>
+    <view class="sub-line">{{statusLabel}} · {{positionLabel}} / {{durationLabel}}</view>
+  </view>
+
+  <view class="actions" catchtap="noop">
+    <button class="action-btn" bindtap="onToggle" disabled="{{actionDisabled}}">{{actionLabel}}</button>
+    <button class="action-btn stop" bindtap="onStop">停止</button>
+  </view>
+
+  <view class="progress-track">
+    <view class="progress-value" style="width: {{progressPct}}%;"></view>
+  </view>
+</view>

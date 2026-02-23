@@ -1,0 +1,13 @@
+<view class="page-shell article-page" wx:if="{{article}}">
+  <view class="card article-card">
+    <view class="article-title">{{article.title}}</view>
+    <image class="article-cover" src="{{article.cover}}" mode="aspectFill" />
+    <view class="article-summary">{{article.summary}}</view>
+    <view class="article-body">
+      <rich-text nodes="{{article.bodyRichText}}"></rich-text>
+    </view>
+  </view>
+
+  <audio-mini-bar></audio-mini-bar>
+</view>
+

@@ -1,0 +1,92 @@
+page {
+  --bg: #f4efe6;
+  --card: #fff9f0;
+  --line: #e7d8c8;
+  --text-main: #30251c;
+  --text-sub: #7a6859;
+  --brand: #5a3c24;
+  --brand-light: #8b6444;
+
+  background: var(--bg);
+  color: var(--text-main);
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+}
+
+view,
+text,
+button,
+input,
+textarea {
+  box-sizing: border-box;
+}
+
+button {
+  border: none;
+  border-radius: 16rpx;
+  background: transparent;
+}
+
+button::after {
+  border: none;
+}
+
+.page-shell {
+  min-height: 100vh;
+  padding: 24rpx 24rpx 220rpx;
+}
+
+.section-title {
+  margin: 8rpx 0 16rpx;
+  font-size: 32rpx;
+  font-weight: 600;
+}
+
+.card {
+  margin-bottom: 20rpx;
+  padding: 22rpx;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 20rpx;
+}
+
+.tag {
+  margin-right: 12rpx;
+  margin-bottom: 10rpx;
+  padding: 6rpx 14rpx;
+  border-radius: 999rpx;
+  font-size: 22rpx;
+  color: var(--brand);
+  background: #efe4d6;
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 68rpx;
+  padding: 0 24rpx;
+  color: #fff;
+  font-size: 26rpx;
+  background: var(--brand);
+  border-radius: 14rpx;
+}
+
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 68rpx;
+  padding: 0 24rpx;
+  color: var(--brand);
+  font-size: 26rpx;
+  background: #fff6ea;
+  border: 1px solid #d9c3ac;
+  border-radius: 14rpx;
+}
+
+.empty {
+  padding: 80rpx 24rpx;
+  text-align: center;
+  font-size: 26rpx;
+  color: var(--text-sub);
+}

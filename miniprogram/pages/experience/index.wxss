@@ -1,0 +1,44 @@
+.experience-page {
+  padding-bottom: 240rpx;
+}
+
+.hero-title {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: #2e2015;
+}
+
+.hero-sub {
+  margin-top: 10rpx;
+  display: inline-block;
+  padding: 6rpx 16rpx;
+  border-radius: 999rpx;
+  font-size: 22rpx;
+  color: #754f2f;
+  background: #f0e2d3;
+}
+
+.hero-desc {
+  margin-top: 16rpx;
+  font-size: 26rpx;
+  line-height: 1.7;
+  color: #685141;
+}
+
+.tips-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #352619;
+}
+
+.tip-item {
+  margin-top: 12rpx;
+  font-size: 26rpx;
+  line-height: 1.6;
+  color: #6f5948;
+}
+
+.go-play {
+  margin-top: 18rpx;
+  width: 100%;
+}

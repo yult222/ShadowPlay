@@ -1,0 +1,56 @@
+{
+  "pages": [
+    "pages/consult/index",
+    "pages/consult/detail",
+    "pages/experience/index",
+    "pages/plays/index",
+    "pages/settings/index",
+    "pages/plays/detail",
+    "pages/settings/favorites"
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#F4EFE6",
+    "navigationBarTitleText": "唐山皮影",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#F4EFE6",
+    "backgroundTextStyle": "light"
+  },
+  "usingComponents": {
+    "audio-mini-bar": "/components/audio-mini-bar/index"
+  },
+  "tabBar": {
+    "color": "#7E7268",
+    "selectedColor": "#5A3C24",
+    "backgroundColor": "#FFF9F0",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/consult/index",
+        "text": "首页资讯",
+        "iconPath": "images/icons/home.png",
+        "selectedIconPath": "images/icons/home-active.png"
+      },
+      {
+        "pagePath": "pages/experience/index",
+        "text": "虚拟体验",
+        "iconPath": "images/icons/business.png",
+        "selectedIconPath": "images/icons/business-active.png"
+      },
+      {
+        "pagePath": "pages/plays/index",
+        "text": "经典剧目",
+        "iconPath": "images/icons/goods.png",
+        "selectedIconPath": "images/icons/goods-active.png"
+      },
+      {
+        "pagePath": "pages/settings/index",
+        "text": "我的",
+        "iconPath": "images/icons/usercenter.png",
+        "selectedIconPath": "images/icons/usercenter-active.png"
+      }
+    ]
+  },
+  "sitemapLocation": "sitemap.json",
+  "style": "v2",
+  "lazyCodeLoading": "requiredComponents"
+}

@@ -1,0 +1,205 @@
+.detail-page {
+  padding-bottom: 260rpx;
+}
+
+.title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16rpx;
+}
+
+.play-title {
+  flex: 1;
+  min-width: 0;
+  font-size: 38rpx;
+  font-weight: 700;
+  line-height: 1.35;
+  color: #2d2117;
+}
+
+.favorite-btn {
+  flex-shrink: 0;
+  height: 62rpx;
+  padding: 0 18rpx;
+  line-height: 62rpx;
+  font-size: 24rpx;
+  color: #fff;
+  background: #7e5a3a;
+  border-radius: 12rpx;
+}
+
+.cover {
+  margin-top: 16rpx;
+  width: 100%;
+  height: 320rpx;
+  border-radius: 16rpx;
+  background: #e6d8c8;
+}
+
+.tag-row {
+  margin-top: 14rpx;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.summary {
+  margin-top: 10rpx;
+  font-size: 26rpx;
+  line-height: 1.7;
+  color: #5f4a38;
+}
+
+.primary-actions {
+  margin-top: 16rpx;
+  display: flex;
+  gap: 12rpx;
+}
+
+.action {
+  flex: 1;
+}
+
+.player-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #332417;
+}
+
+.player-status {
+  margin-top: 8rpx;
+  font-size: 24rpx;
+  color: #7c6855;
+}
+
+.player-slider {
+  margin-top: 12rpx;
+}
+
+.player-actions {
+  margin-top: 10rpx;
+  display: flex;
+  gap: 12rpx;
+}
+
+.player-action {
+  flex: 1;
+}
+
+.block-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12rpx;
+}
+
+.block-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #3a2a1c;
+}
+
+.toggle-text {
+  height: 56rpx;
+  line-height: 56rpx;
+  padding: 0 18rpx;
+  border-radius: 10rpx;
+  font-size: 24rpx;
+  color: #704d31;
+  background: #f1e6da;
+}
+
+.narration-text {
+  margin-top: 12rpx;
+  font-size: 26rpx;
+  line-height: 1.7;
+  color: #5f4a38;
+}
+
+.narration-meta {
+  margin-top: 12rpx;
+  font-size: 24rpx;
+  color: #806a56;
+}
+
+.track-item {
+  margin-top: 12rpx;
+  padding: 16rpx;
+  border-radius: 14rpx;
+  border: 1px solid #e2d2c1;
+  background: #fffdf8;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16rpx;
+}
+
+.track-item.active {
+  border-color: #9b7755;
+  background: #f8efe6;
+}
+
+.track-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.track-title {
+  font-size: 28rpx;
+  color: #36271c;
+}
+
+.track-sub {
+  margin-top: 6rpx;
+  font-size: 22rpx;
+  color: #806b59;
+}
+
+.track-btn {
+  width: 120rpx;
+  min-height: 58rpx;
+  font-size: 24rpx;
+}
+
+.role-item,
+.scene-item {
+  margin-top: 12rpx;
+  display: flex;
+  gap: 14rpx;
+  align-items: flex-start;
+}
+
+.avatar {
+  width: 90rpx;
+  height: 90rpx;
+  border-radius: 50%;
+  background: #e3d3c4;
+}
+
+.role-main,
+.scene-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.role-name,
+.scene-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #332417;
+}
+
+.role-desc,
+.scene-desc {
+  margin-top: 6rpx;
+  font-size: 24rpx;
+  line-height: 1.6;
+  color: #725f4e;
+}
+
+.scene-img {
+  width: 120rpx;
+  height: 90rpx;
+  border-radius: 12rpx;
+  background: #dfcfbe;
+}

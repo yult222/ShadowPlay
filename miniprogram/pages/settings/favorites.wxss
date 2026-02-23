@@ -1,0 +1,50 @@
+.favorites-page {
+  padding-bottom: 240rpx;
+}
+
+.favorite-card {
+  display: flex;
+  gap: 16rpx;
+}
+
+.cover {
+  width: 150rpx;
+  height: 150rpx;
+  border-radius: 14rpx;
+  background: #e5d6c6;
+}
+
+.main {
+  flex: 1;
+  min-width: 0;
+}
+
+.title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #322317;
+}
+
+.tags {
+  margin-top: 10rpx;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.actions {
+  margin-top: 10rpx;
+  display: flex;
+  gap: 10rpx;
+}
+
+.tiny {
+  min-height: 56rpx;
+  padding: 0 18rpx;
+  font-size: 23rpx;
+}
+
+.danger {
+  color: #8a3f27;
+  border-color: #d6ac97;
+  background: #fcefe8;
+}

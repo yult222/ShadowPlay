@@ -1,0 +1,53 @@
+<view class="page-shell consult-page">
+  <view class="card hero-card">
+    <swiper
+      class="hero-swiper"
+      indicator-dots="true"
+      indicator-color="rgba(255,255,255,0.55)"
+      indicator-active-color="#ffffff"
+      autoplay="true"
+      interval="3200"
+      duration="550"
+      circular="true"
+    >
+      <block wx:for="{{banners}}" wx:key="id" wx:for-item="banner">
+        <swiper-item>
+          <view
+            class="hero-slide"
+            bindtap="onTapBanner"
+            data-target-type="{{banner.targetType}}"
+            data-target-id="{{banner.targetId}}"
+          >
+            <image class="hero-image" src="{{banner.image}}" mode="aspectFill" />
+            <view class="hero-mask"></view>
+            <view class="hero-content">
+              <view class="hero-title">{{banner.title}}</view>
+              <view class="hero-sub">{{banner.subtitle}}</view>
+            </view>
+          </view>
+        </swiper-item>
+      </block>
+    </swiper>
+  </view>
+
+  <view class="section-title">资讯头条</view>
+  <view wx:if="{{headlines.length === 0}}" class="empty card">暂无资讯内容</view>
+
+  <block wx:for="{{headlines}}" wx:key="id" wx:for-item="item">
+    <view
+      class="card headline-item"
+      bindtap="onTapHeadline"
+      data-target-type="{{item.targetType}}"
+      data-target-id="{{item.targetId}}"
+    >
+      <view class="headline-main">
+        <view class="headline-title">{{item.title}}</view>
+        <view class="headline-summary">{{item.summary}}</view>
+      </view>
+      <image class="headline-cover" src="{{item.cover}}" mode="aspectFill" />
+    </view>
+  </block>
+
+  <audio-mini-bar></audio-mini-bar>
+</view>
+

@@ -1,0 +1,22 @@
+<view class="page-shell plays-page">
+  <view class="card hero">
+    <view class="hero-title">经典剧目</view>
+    <view class="hero-sub">每个剧目都支持解说音轨与单曲播放，不做连续播放。</view>
+  </view>
+
+  <block wx:for="{{plays}}" wx:for-item="play" wx:key="id">
+    <view class="card play-card" data-play-id="{{play.id}}" bindtap="openPlayDetail">
+      <image class="play-cover" src="{{play.cover}}" mode="aspectFill" />
+      <view class="play-main">
+        <view class="play-title">{{play.title}}</view>
+        <view class="play-tag-row">
+          <text class="tag" wx:for="{{play.tags}}" wx:for-item="tag" wx:key="*this">{{tag}}</text>
+        </view>
+        <view class="play-meta">解说 + {{play.tracks.length}} 条音轨</view>
+      </view>
+    </view>
+  </block>
+
+  <audio-mini-bar></audio-mini-bar>
+</view>
+

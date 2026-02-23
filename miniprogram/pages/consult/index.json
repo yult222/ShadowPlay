@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "首页资讯",
+  "usingComponents": {
+    "audio-mini-bar": "/components/audio-mini-bar/index"
+  }
+}
+

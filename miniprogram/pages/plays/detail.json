@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "剧目详情",
+  "usingComponents": {
+    "audio-mini-bar": "/components/audio-mini-bar/index"
+  }
+}
+

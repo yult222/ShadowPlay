@@ -1,0 +1,103 @@
+<view class="page-shell detail-page" wx:if="{{play}}">
+  <view class="card head-card">
+    <view class="title-row">
+      <view class="play-title">{{play.title}}</view>
+      <button class="favorite-btn" bindtap="toggleFavorite">{{isFavorite ? "★ 已收藏" : "☆ 收藏"}}</button>
+    </view>
+
+    <image class="cover" src="{{play.cover}}" mode="aspectFill" />
+
+    <view class="tag-row">
+      <text class="tag" wx:for="{{play.tags}}" wx:for-item="tag" wx:key="*this">{{tag}}</text>
+    </view>
+
+    <view class="summary">
+      <rich-text nodes="{{play.summaryRichText}}"></rich-text>
+    </view>
+
+    <view class="primary-actions">
+      <button class="btn-primary action" bindtap="playNarration">立即收听解说</button>
+      <button class="btn-outline action" bindtap="goExperience">去虚拟体验</button>
+    </view>
+  </view>
+
+  <view class="card player-card">
+    <view class="player-title">当前播放：{{playerState.title || "暂无"}}</view>
+    <view class="player-status">{{playerStatusText}} · {{playerPositionLabel}} / {{playerDurationLabel}}</view>
+
+    <slider
+      class="player-slider"
+      min="0"
+      max="{{playerSeekMax}}"
+      value="{{playerSeekValue}}"
+      activeColor="#5A3C24"
+      backgroundColor="#E7D9C9"
+      block-color="#5A3C24"
+      bindchanging="onSeekChanging"
+      bindchange="onSeekChange"
+    />
+
+    <view class="player-actions">
+      <button class="btn-primary player-action" bindtap="onMainTogglePlay">
+        {{playerState.status === "Playing" ? "暂停" : "播放/继续"}}
+      </button>
+      <button class="btn-outline player-action" bindtap="onMainStopPlay">停止</button>
+    </view>
+  </view>
+
+  <view class="card narration-card">
+    <view class="block-title-row">
+      <view class="block-title">解说文本</view>
+      <button class="toggle-text" bindtap="toggleNarrationText">{{showNarrationText ? "收起" : "展开"}}</button>
+    </view>
+
+    <view wx:if="{{showNarrationText}}" class="narration-text">
+      <rich-text nodes="{{play.narration.textRichText}}"></rich-text>
+    </view>
+
+    <view class="narration-meta">音轨状态：{{activeTrackId === narrationTrackId ? "当前解说正在播放" : "解说待播放"}}</view>
+  </view>
+
+  <view class="card track-card">
+    <view class="block-title">剧目音轨</view>
+
+    <block wx:for="{{play.tracks}}" wx:for-item="track" wx:key="id">
+      <view class="track-item {{activeTrackId === track.id ? 'active' : ''}}">
+        <view class="track-main">
+          <view class="track-title">{{track.title}}</view>
+          <view class="track-sub">{{track.durationSec ? track.durationSec + " 秒" : "时长待补充"}}</view>
+        </view>
+        <button class="btn-primary track-btn" data-track-id="{{track.id}}" bindtap="playTrack">播放</button>
+      </view>
+    </block>
+  </view>
+
+  <view class="card" wx:if="{{play.roles && play.roles.length}}">
+    <view class="block-title">角色卡</view>
+    <block wx:for="{{play.roles}}" wx:for-item="role" wx:key="name">
+      <view class="role-item">
+        <image class="avatar" src="{{role.img}}" mode="aspectFill" />
+        <view class="role-main">
+          <view class="role-name">{{role.name}}</view>
+          <view class="role-desc">{{role.desc}}</view>
+        </view>
+      </view>
+    </block>
+  </view>
+
+  <view class="card" wx:if="{{play.scenes && play.scenes.length}}">
+    <view class="block-title">场景卡</view>
+    <block wx:for="{{play.scenes}}" wx:for-item="scene" wx:key="title">
+      <view class="scene-item">
+        <image class="scene-img" src="{{scene.img}}" mode="aspectFill" />
+        <view class="scene-main">
+          <view class="scene-title">{{scene.title}}</view>
+          <view class="scene-desc">{{scene.desc}}</view>
+        </view>
+      </view>
+    </block>
+  </view>
+
+  <audio-mini-bar></audio-mini-bar>
+</view>
+
