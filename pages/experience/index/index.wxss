@@ -1,0 +1,66 @@
+.container {
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  background: #f0f0f0;
+}
+
+.stage-view {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 舞台容器：3:4 比例 */
+.stage-container {
+  position: relative;
+  width: 90%;
+  max-width: 750rpx;
+  margin: 0 auto;
+  padding-top: 133.33%; /* 3:4 → 高 = 4/3 ≈ 133.33% of width */
+}
+
+.layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.highlight-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* 默认不拦截，雕刻滑动需手动处理 touch */
+}
+
+/* 雕刻起点/终点（临时样式） */
+.start-point, .end-point {
+  position: absolute;
+  width: 20rpx;
+  height: 20rpx;
+  background: red;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+/* 上色热点（实际点击区由 JS 动态计算，这里只是示意） */
+.color-hotspot {
+  position: absolute;
+  background: rgba(0, 255, 0, 0.3);
+  border-radius: 50%;
+  pointer-events: auto; /* 允许点击 */
+}
+
+.result-image {
+  width: 90%;
+  max-width: 750rpx;
+  margin-bottom: 40rpx;
+}

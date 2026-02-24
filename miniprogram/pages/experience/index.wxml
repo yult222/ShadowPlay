@@ -1,21 +1,105 @@
 <view class="page-shell experience-page">
-  <view class="card hero">
+  <!-- 开场状态 -->
+  <view wx:if="{{currentState === 'start'}}" class="card hero">
     <view class="hero-title">虚拟体验</view>
-    <view class="hero-sub">Phase 0 占位页</view>
+    <view class="hero-sub">工坊式制作</view>
     <view class="hero-desc">
-      体验关卡正在制作中。当前页面已实现：进入自动暂停剧目音频，退出自动恢复到进入前的音轨与进度。
+      体验皮影制作的两大工序：雕刻和上色。
     </view>
+    <button class="btn-primary start-btn" bindtap="startExperience">开始体验</button>
   </view>
 
-  <view class="card tips-card">
-    <view class="tips-title">已预留的后续能力</view>
-    <view class="tip-item">1. 数据驱动关卡列表（数量不写死）</view>
-    <view class="tip-item">2. 体验页前台 BGM（受设置页开关控制）</view>
-    <view class="tip-item">3. 通关后生成皮影卡片并允许保存到相册</view>
+  <!-- 雕刻和上色状态共用舞台容器 -->
+  <view wx:if="{{currentState === 'carving' || currentState === 'coloring'}}" class="stage-container">
+    <!-- 舞台框（固定比例） -->
+    <view class="stage-frame" style="width: {{stageWidth}}px; height: {{stageHeight}}px;">
+      <!-- 皮料底图 -->
+      <view class="stage-layer base-layer">
+        <image src="../../images/mock/banner-1.png" mode="aspectFit" style="width: 100%; height: 100%;" />
+      </view>
+      
+      <!-- 雕刻覆盖层 -->
+      <view wx:for="{{6}}" wx:key="carving-{{index}}" class="stage-layer carving-overlay" wx:if="{{currentState === 'carving' && index >= carvingStep}}">
+        <image src="../../images/mock/banner-2.png" mode="aspectFit" style="width: 100%; height: 100%;" />
+      </view>
+      
+      <!-- 上色覆盖层 -->
+      <view wx:for="{{6}}" wx:key="coloring-{{index}}" class="stage-layer coloring-overlay" wx:if="{{currentState === 'coloring' && index >= coloringStep}}">
+        <image src="../../images/mock/banner-3.png" mode="aspectFit" style="width: 100%; height: 100%;" />
+      </view>
+      
+      <!-- 高亮层 -->
+      <view class="stage-layer highlight-layer">
+        <!-- 雕刻高亮 -->
+        <view wx:if="{{currentState === 'carving'}}" class="carving-highlight">
+          <view class="start-point" style="left: {{carvingData[carvingStep].startX}}px; top: {{carvingData[carvingStep].startY}}px;"></view>
+          <view class="end-point" style="left: {{carvingData[carvingStep].endX}}px; top: {{carvingData[carvingStep].endY}}px;"></view>
+          <view class="guide-line" style="
+            left: {{Math.min(carvingData[carvingStep].startX, carvingData[carvingStep].endX)}}px;
+            top: {{Math.min(carvingData[carvingStep].startY, carvingData[carvingStep].endY)}}px;
+            width: {{Math.abs(carvingData[carvingStep].endX - carvingData[carvingStep].startX)}}px;
+            height: {{Math.abs(carvingData[carvingStep].endY - carvingData[carvingStep].startY)}}px;
+          "></view>
+        </view>
+        
+        <!-- 上色高亮 -->
+        <view wx:if="{{currentState === 'coloring'}}" class="coloring-highlight">
+          <view class="coloring-hotspot" style="
+            left: {{coloringData[coloringStep].x - coloringData[coloringStep].radius}}px;
+            top: {{coloringData[coloringStep].y - coloringData[coloringStep].radius}}px;
+            width: {{coloringData[coloringStep].radius * 2}}px;
+            height: {{coloringData[coloringStep].radius * 2}}px;
+          "></view>
+        </view>
+      </view>
+    </view>
+    
+    <!-- 操作提示 -->
+    <view class="stage-tips">
+      <view wx:if="{{currentState === 'carving'}}">雕刻步骤 {{carvingStep + 1}}/6：从起点滑到终点</view>
+      <view wx:if="{{currentState === 'coloring'}}">上色步骤 {{coloringStep + 1}}/6：点击高亮区域</view>
+    </view>
+    
+    <!-- 触摸区域 -->
+    <view 
+      class="touch-area" 
+      style="width: {{stageWidth}}px; height: {{stageHeight}}px;"
+      bindtouchstart="{{currentState === 'carving' ? 'handleCarvingTouchStart' : ''}}"
+      bindtouchend="{{currentState === 'carving' ? 'handleCarvingTouchEnd' : ''}}"
+      catchtap="{{currentState === 'coloring' ? 'handleColoringTap' : ''}}"
+    ></view>
+  </view>
 
-    <button class="btn-outline go-play" bindtap="goToPlaysTab">返回经典剧目继续收听</button>
+  <!-- 成品状态 -->
+  <view wx:if="{{currentState === 'finished'}}" class="card finished-card">
+    <view class="finished-title">制作完成</view>
+    <view class="finished-desc">您的皮影作品已经完成！</view>
+    
+    <!-- 成品展示 -->
+    <view class="finished-display">
+      <view wx:if="{{displayMode === 'color'}}" class="color-version">
+        <image src="../../images/mock/banner-1.png" mode="aspectFit" style="width: 200px; height: 267px;" />
+      </view>
+      <view wx:if="{{displayMode === 'silhouette'}}" class="silhouette-version">
+        <image src="../../images/mock/banner-4.png" mode="aspectFit" style="width: 200px; height: 267px;" />
+      </view>
+    </view>
+    
+    <!-- 控制按钮 -->
+    <view class="finished-controls">
+      <button class="btn-outline mode-btn" bindtap="toggleDisplayMode">
+        {{displayMode === 'color' ? '查看剪影' : '查看彩皮'}}
+      </button>
+      <button class="btn-primary save-btn" bindtap="save成品">保存作品</button>
+    </view>
+    
+    <!-- 底部按钮 -->
+    <view class="finished-footer">
+      <button class="btn-outline restart-btn" bindtap="restartExperience">重新制作</button>
+      <button class="btn-outline back-btn" bindtap="backToStart">返回开场</button>
+      <button class="btn-outline go-play" bindtap="goToPlaysTab">返回经典剧目</button>
+    </view>
   </view>
 
   <audio-mini-bar></audio-mini-bar>
 </view>
-
