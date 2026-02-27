@@ -1,231 +1,81 @@
-.page-shell {
-  min-height: 100vh;
-  background: #f5f5f5;
-  padding: 24rpx;
-  box-sizing: border-box;
-}
-
-.card {
-  background: white;
-  border-radius: 12rpx;
-  padding: 32rpx;
-  margin-bottom: 24rpx;
-  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.08);
-}
-
-.hero {
-  text-align: center;
-}
-
-.hero-title {
-  font-size: 36rpx;
-  font-weight: bold;
-  margin-bottom: 12rpx;
-  color: #333;
-}
-
-.hero-sub {
-  font-size: 24rpx;
-  color: #666;
-  margin-bottom: 24rpx;
-}
-
-.hero-desc {
-  font-size: 28rpx;
-  color: #999;
-  line-height: 1.5;
-  margin-bottom: 32rpx;
-}
-
-.btn-primary {
-  display: block;
-  width: 100%;
-  padding: 20rpx;
-  border: none;
-  border-radius: 8rpx;
-  background: #1890ff;
-  font-size: 28rpx;
-  color: white;
-  text-align: center;
-  margin-top: 32rpx;
-}
-
-.btn-outline {
-  display: block;
-  width: 100%;
-  padding: 20rpx;
-  border: 2rpx solid #d9d9d9;
-  border-radius: 8rpx;
-  background: white;
-  font-size: 28rpx;
-  color: #333;
-  text-align: center;
-  margin-top: 32rpx;
-}
-
-/* 舞台容器 */
 .stage-container {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 32rpx;
 }
 
 .stage-frame {
   position: relative;
-  background: #f0f0f0;
-  border-radius: 8rpx;
   overflow: hidden;
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
 }
 
 .stage-layer {
   position: absolute;
-  top: 0;
   left: 0;
+  top: 0;
   width: 100%;
   height: 100%;
 }
 
-.base-layer {
-  z-index: 1;
+.highlight-canvas {
+  position: absolute;
+  left: 0;
+  top: 0;
 }
 
-.carving-overlay {
-  z-index: 2;
+.stage-tips {
+  margin-top: 12px;
+  color: #fff;
+  font-size: 14px;
+  opacity: 0.9;
+  text-align: center;
+  max-width: 320px;
 }
 
-.coloring-overlay {
-  z-index: 3;
-}
-
-.highlight-layer {
-  z-index: 4;
-  pointer-events: none;
-}
-
-/* 触摸区域 */
+/* 触摸层盖在舞台上方 */
 .touch-area {
   position: absolute;
   top: 0;
-  left: 0;
-  z-index: 5;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
+  background: rgba(0, 0, 0, 0);
 }
 
-/* 雕刻高亮 */
-.carving-highlight {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
+.base-layer { z-index: 1; }
+.overlay-layer { z-index: 2; }
+.highlight-layer { z-index: 3; }
 
-.start-point,
-.end-point {
-  position: absolute;
-  width: 20rpx;
-  height: 20rpx;
-  border-radius: 50%;
-  background: #1890ff;
-  transform: translate(-50%, -50%);
-}
-
-.end-point {
-  background: #52c41a;
-}
-
-.guide-line {
-  position: absolute;
-  border: 2rpx dashed #1890ff;
-}
-
-/* 上色高亮 */
-.coloring-highlight {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.coloring-hotspot {
-  position: absolute;
-  border: 4rpx solid #1890ff;
-  border-radius: 50%;
-  background: rgba(24, 144, 255, 0.2);
-  animation: pulse 1s infinite;
-}
-
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-    opacity: 0.8;
-  }
-  50% {
-    transform: scale(1.1);
-    opacity: 0.6;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 0.8;
-  }
-}
-
-/* 舞台提示 */
-.stage-tips {
-  margin-top: 24rpx;
-  font-size: 28rpx;
-  color: #333;
-  text-align: center;
-}
-
-/* 成品状态 */
+/* ======== 成品页居中修正 ======== */
 .finished-card {
-  text-align: center;
-}
-
-.finished-title {
-  font-size: 32rpx;
-  font-weight: bold;
-  margin-bottom: 16rpx;
-  color: #333;
-}
-
-.finished-desc {
-  font-size: 24rpx;
-  color: #666;
-  margin-bottom: 32rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .finished-display {
+  width: 100%;
   display: flex;
   justify-content: center;
-  margin-bottom: 32rpx;
+  margin-top: 12px;
+  margin-bottom: 12px;
 }
 
 .finished-controls {
+  width: 100%;
   display: flex;
-  justify-content: space-between;
-  gap: 16rpx;
-  margin-bottom: 32rpx;
-}
-
-.finished-controls button {
-  flex: 1;
-  margin-top: 0;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 .finished-footer {
+  width: 100%;
   display: flex;
-  flex-direction: column;
-  gap: 16rpx;
-}
-
-.finished-footer button {
-  margin-top: 0;
-}
-
-.go-play {
-  margin-top: 48rpx;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
 }
