@@ -1,1 +1,32 @@
+<view wx:if="{{visible}}" class="mask">
+  <view class="popup">
 
+    <view class="title">
+      {{title}}
+    </view>
+
+    <view class="content">
+      {{content}}
+    </view>
+
+    <view class="buttons">
+
+      <button
+        wx:if="{{showCancel}}"
+        bindtap="onCancel"
+        class="cancel"
+      >
+        取消
+      </button>
+
+      <button
+        bindtap="onConfirm"
+        class="confirm"
+      >
+        {{confirmText}}
+      </button>
+
+    </view>
+
+  </view>
+</view>
