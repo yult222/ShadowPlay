@@ -2,8 +2,8 @@ const audioService = require("../../services/audioService");
 const { hideShareMenu } = require("../../utils/page");
 
 // ============ 点击/滑动容错系数（你要增大半径就改这里）============
-const TAP_RADIUS_SCALE = 1.35;   // 上色点击半径放大倍率：1.25~1.6 之间体验最好
-const CARVE_RADIUS_SCALE = 1.15; // 雕刻起终点命中半径放大倍率：1.0~1.3
+const TAP_RADIUS_SCALE = 1.45;   // 录屏演示优先：适度放宽上色点击范围
+const CARVE_RADIUS_SCALE = 1.45; // 录屏演示优先：适度放宽雕刻起终点范围
 
 // ============ 来自 坐标表.xlsx（基准画布 1600 x 2133）============
 // 注意：Excel 有些 threshold/radius 为空，我按“同类默认/继承”处理（注释写清楚）
@@ -89,10 +89,17 @@ Page({
     this.renderHighlight();
   },
 
-  updateStageRect() {
+  updateStageRect(done) {
     const query = wx.createSelectorQuery().in(this);
-    query.select(".stage-frame").boundingClientRect((rect) => {
-      if (rect) this.setData({ stageRect: rect });
+    query.select(".touch-area").boundingClientRect((rect) => {
+      if (!rect) {
+        if (done) done(null);
+        return;
+      }
+
+      this.setData({ stageRect: rect }, () => {
+        if (done) done(rect);
+      });
     }).exec();
   },
 
@@ -111,10 +118,19 @@ Page({
   },
 
   getLocalPosFromTouch(touch) {
+    if (!touch) return null;
+
     const { stageRect } = this.data;
-    if (touch.x != null && touch.y != null) return { x: touch.x, y: touch.y };
-    if (!stageRect) return { x: touch.clientX, y: touch.clientY };
-    return { x: touch.clientX - stageRect.left, y: touch.clientY - stageRect.top };
+    const clientX = touch.clientX ?? touch.x ?? touch.pageX;
+    const clientY = touch.clientY ?? touch.y ?? touch.pageY;
+
+    if (!Number.isFinite(clientX) || !Number.isFinite(clientY)) return null;
+    if (!stageRect) return { x: clientX, y: clientY };
+
+    return {
+      x: clientX - stageRect.left,
+      y: clientY - stageRect.top,
+    };
   },
 
   // ======== Canvas 高亮 ========
@@ -265,22 +281,28 @@ Page({
       carvingStep: 0,
       currentCarvingOverlay: 0,
       inputLocked: false,
+    }, () => {
+      wx.nextTick(() => {
+        this.updateStageRect(() => {
+          this.startHighlightLoop();
+          this.renderHighlight();
+        });
+      });
     });
-    this.updateStageRect();
-    this.startHighlightLoop();
-    this.renderHighlight();
   },
 
   // ======== 雕刻 ========
   handleCarvingTouchStart(e) {
     if (this.data.inputLocked) return;
     const p = this.getLocalPosFromTouch(e.touches[0]);
+    if (!p) return;
     this.setData({ touchStart: p });
   },
 
   handleCarvingTouchEnd(e) {
     if (this.data.inputLocked) return;
     const p = this.getLocalPosFromTouch(e.changedTouches[0]);
+    if (!p) return;
     this.setData({ touchEnd: p });
     this.checkCarvingStroke();
   },
@@ -352,10 +374,9 @@ Page({
     const item = coloringData[coloringStep];
     if (!item) return;
 
-    let tap = { x: e.detail?.x ?? 0, y: e.detail?.y ?? 0 };
-    if ((!tap.x && !tap.y) && e.touches && e.touches[0]) {
-      tap = this.getLocalPosFromTouch(e.touches[0]);
-    }
+    const touch = e.changedTouches?.[0] || e.touches?.[0] || e.detail;
+    const tap = this.getLocalPosFromTouch(touch);
+    if (!tap) return;
 
     let r = this.scaleLen((item.radius || 180) * TAP_RADIUS_SCALE);
     const maxR = this.data.stageWidth * 0.48;
@@ -364,11 +385,15 @@ Page({
     const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
 
     let hitIndex = -1;
+    let nearestDistance = Infinity;
     for (let i = 0; i < item.points.length; i++) {
+      if (coloringHitSet[i]) continue;
+
       const p = this.scalePoint(item.points[i].x, item.points[i].y);
-      if (dist(tap, p) <= r) {
+      const distance = dist(tap, p);
+      if (distance <= r && distance < nearestDistance) {
         hitIndex = i;
-        break;
+        nearestDistance = distance;
       }
     }
     if (hitIndex === -1) return;
