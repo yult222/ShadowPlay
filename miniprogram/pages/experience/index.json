@@ -1,7 +1,0 @@
-{
-  "navigationBarTitleText": "虚拟体验",
-  "usingComponents": {
-    "audio-mini-bar": "/components/audio-mini-bar/index"
-  }
-}
-
