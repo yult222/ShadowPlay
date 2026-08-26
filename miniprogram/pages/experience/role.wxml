@@ -1,0 +1,13 @@
+<experience-shell title="{{copy.roleTitle}}" showBack="{{true}}" backLabel="{{copy.back}}" bind:back="back">
+  <view class="role-visual"><image src="../../images/experience-v2/xiaodan-anchor.webp" mode="aspectFit" /></view>
+  <view class="role-cards">
+    <button class="role-card active" bindtap="selectXiaodan">{{copy.xiaodanCard}}</button>
+    <button class="role-card locked" disabled="{{true}}"><text>{{copy.wushengCard}}</text><text>{{copy.comingSoon}}</text></button>
+    <button class="role-card locked" disabled="{{true}}"><text>{{copy.chouCard}}</text><text>{{copy.comingSoon}}</text></button>
+  </view>
+  <view class="role-detail">
+    <view class="role-detail-title">{{copy.roleIntro}}</view>
+    <view>{{copy.name}}</view><view>{{copy.feature}}</view><view>{{copy.difficulty}}</view>
+  </view>
+  <button class="primary-action" bindtap="choose">{{copy.selectRole}}</button>
+</experience-shell>

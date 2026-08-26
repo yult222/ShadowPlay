@@ -1,0 +1,3 @@
+<experience-shell title="{{copy.help}}" showBack="{{true}}" backLabel="{{copy.back}}" bind:back="back">
+  <view class="help-flow"><view wx:for="{{stages}}" wx:key="id" class="help-step"><view class="gesture"><view class="gesture-ring"></view><view class="gesture-dot"></view></view><text>{{item.title}}</text></view></view>
+</experience-shell>

@@ -1,0 +1,18 @@
+<experience-shell fullBleed="{{true}}">
+  <view class="entry-stage">
+    <image class="entry-image" src="../../images/experience-v2/entry-hero.webp" mode="aspectFill" />
+    <view class="entry-shade"></view>
+    <button class="entry-settings" style="top:calc(120rpx + env(safe-area-inset-top))" bindtap="openSettings">{{copy.settings}}</button>
+    <view class="entry-heading" style="top:calc(132rpx + env(safe-area-inset-top))">{{copy.entryTitle}}</view>
+    <view class="entry-copy">
+      <view class="entry-subtitle">{{copy.entrySubtitle}}</view>
+      <view class="entry-actions">
+        <button class="entry-primary" bindtap="start">{{copy.start}}</button>
+        <button class="entry-secondary" bindtap="openGallery">{{copy.gallery}}</button>
+        <button class="entry-secondary" bindtap="openHelp">{{copy.help}}</button>
+      </view>
+    </view>
+    <view class="paper-pattern"></view>
+  </view>
+</experience-shell>
+<common-popup visible="{{settingsVisible}}" title="{{copy.settings}}" sfxLabel="{{copy.soundEffects}}" bgmLabel="{{copy.backgroundMusic}}" sfxEnabled="{{sfxEnabled}}" bgmEnabled="{{bgmEnabled}}" bind:close="closeSettings" bind:sfx="changeSfx" bind:bgm="changeBgm" />

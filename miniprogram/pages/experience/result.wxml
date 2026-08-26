@@ -1,0 +1,6 @@
+<experience-shell title="{{copy.result}}">
+  <view class="result-stage">
+    <view class="result-light"></view>
+    <image src="../../images/experience-v2/xiaodan-anchor.webp" mode="aspectFit" />
+  </view>
+</experience-shell>

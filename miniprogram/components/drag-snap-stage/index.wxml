@@ -1,0 +1,7 @@
+<view class="drag-stage" style="width:{{width}}px;height:{{height}}px">
+  <slot></slot>
+  <view wx:for="{{targets}}" wx:key="id" class="snap-target {{item.kind}}" style="left:{{item.x}}px;top:{{item.y}}px;width:{{item.width}}px;height:{{item.height}}px"></view>
+  <view wx:for="{{localItems}}" wx:key="id" class="drag-item {{item.kind}} {{item.fixed ? 'fixed' : ''}}" data-index="{{index}}" style="left:{{item.x}}px;top:{{item.y}}px;width:{{item.width}}px;height:{{item.height}}px" catchtouchstart="onStart" catchtouchmove="onMove" catchtouchend="onEnd">
+    <image wx:if="{{item.image}}" class="drag-image {{item.silhouette ? 'silhouette' : ''}}" src="{{item.image}}" mode="aspectFit" />
+  </view>
+</view>

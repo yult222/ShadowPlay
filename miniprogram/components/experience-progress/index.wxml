@@ -1,0 +1,1 @@
+<view class="progress-track"><view class="progress-value" style="width:{{value}}%"></view></view>

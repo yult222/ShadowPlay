@@ -1,5 +1,6 @@
 const KEYS = {
   BGM_ENABLED: "settings.bgmEnabled",
+  SFX_ENABLED: "settings.sfxEnabled",
   FAVORITE_PLAY_IDS: "favorites.playIds",
   AUDIO_RESUME_TOKEN: "audio.resumeToken",
   USER_PROFILE: "user.profile",
@@ -31,6 +32,11 @@ function ensureDefaults() {
     safeSet(KEYS.BGM_ENABLED, true);
   }
 
+  const sfxEnabled = safeGet(KEYS.SFX_ENABLED, null);
+  if (typeof sfxEnabled !== "boolean") {
+    safeSet(KEYS.SFX_ENABLED, true);
+  }
+
   const favoritePlayIds = safeGet(KEYS.FAVORITE_PLAY_IDS, null);
   if (!Array.isArray(favoritePlayIds)) {
     safeSet(KEYS.FAVORITE_PLAY_IDS, []);
@@ -56,6 +62,14 @@ function getBgmEnabled() {
 
 function setBgmEnabled(enabled) {
   safeSet(KEYS.BGM_ENABLED, Boolean(enabled));
+}
+
+function getSfxEnabled() {
+  return Boolean(safeGet(KEYS.SFX_ENABLED, true));
+}
+
+function setSfxEnabled(enabled) {
+  safeSet(KEYS.SFX_ENABLED, Boolean(enabled));
 }
 
 function getFavoritePlayIds() {
@@ -140,6 +154,8 @@ module.exports = {
   ensureDefaults,
   getBgmEnabled,
   setBgmEnabled,
+  getSfxEnabled,
+  setSfxEnabled,
   getFavoritePlayIds,
   setFavoritePlayIds,
   toggleFavoritePlay,

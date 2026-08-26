@@ -1,0 +1,5 @@
+<view class="process-list">
+  <button wx:for="{{stages}}" wx:key="id" class="process-step {{item.status}}" data-id="{{item.id}}" disabled="{{item.status !== 'active'}}" bindtap="onStage">
+    <view class="step-mark"></view><view class="step-title">{{item.title}}</view>
+  </button>
+</view>

@@ -1,0 +1,7 @@
+{
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "experience-shell": "/components/experience-shell/index",
+    "common-popup": "/components/common-popup/index"
+  }
+}

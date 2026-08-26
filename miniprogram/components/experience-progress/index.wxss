@@ -1,0 +1,1 @@
+.progress-track{width:100%;height:10rpx;overflow:hidden;border-radius:999rpx;background:#e3d4c2}.progress-value{height:100%;border-radius:999rpx;background:#a62b23;transition:width .35s ease}

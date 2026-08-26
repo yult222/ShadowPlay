@@ -1,0 +1,8 @@
+<view class="experience-shell {{fullBleed ? 'full-bleed' : ''}}">
+  <view class="experience-header" style="padding-top:{{statusBarHeight}}px;height:calc(96rpx + {{statusBarHeight}}px)">
+    <button wx:if="{{showBack}}" class="header-action header-left" bindtap="onBack">{{backLabel}}</button>
+    <button wx:if="{{showSettings}}" class="header-action header-left" bindtap="onSettings">{{settingsLabel}}</button>
+    <view class="header-title">{{title}}</view>
+  </view>
+  <view class="experience-content"><slot></slot></view>
+</view>

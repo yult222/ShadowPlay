@@ -1,0 +1,9 @@
+Component({
+  properties:{visible:Boolean,title:String,sfxLabel:String,bgmLabel:String,sfxEnabled:Boolean,bgmEnabled:Boolean},
+  methods:{
+    onClose(){this.triggerEvent("close");},
+    onSfx(e){this.triggerEvent("sfx",{value:Boolean(e.detail.value)});},
+    onBgm(e){this.triggerEvent("bgm",{value:Boolean(e.detail.value)});},
+    noop(){},
+  },
+});
