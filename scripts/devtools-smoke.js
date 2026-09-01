@@ -72,7 +72,11 @@ function maskSample(mask) {
     await wait(500); assert.equal(await pageData(miniProgram, "activeStageId"), "trace");
     await miniProgram.screenshot({ path: path.join(OUTPUT, "workbench-trace-guide.png") });
     await stroke(miniProgram, [{ x: 0.02, y: 0.02 }, { x: 0.03, y: 0.03 }]);
-    await stroke(miniProgram, densifyPath(TRACE_POINTS, 0.014)); await wait(500); assert.equal(await pageData(miniProgram, "activeStageId"), "carve");
+    const assistedHead = densifyPath(DRAFT_GROUPS[0].paths[0], 0.026).map((point) => ({ x: point.x + 0.045, y: point.y + 0.025 }));
+    await stroke(miniProgram, assistedHead);
+    await miniProgram.screenshot({ path: path.join(OUTPUT, "workbench-trace-assisted.png") });
+    for (const group of DRAFT_GROUPS) for (const points of group.paths) await stroke(miniProgram, densifyPath(points, 0.026));
+    await wait(500); assert.equal(await pageData(miniProgram, "activeStageId"), "carve");
 
     for (const group of CARVE_GROUPS) for (const points of group.paths) await stroke(miniProgram, densifyPath(points, 0.016));
     await wait(500); assert.equal(await pageData(miniProgram, "activeStageId"), "color");

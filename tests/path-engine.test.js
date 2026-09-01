@@ -1,7 +1,7 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const { densifyPath, markPathCoverage, pathCoverageProgress, pointInPolygon, buildMaskCells, paintMask } = require("../miniprogram/utils/pathEngine");
-const { TRACE_POINTS, CARVE_GROUPS, COLOR_MASKS } = require("../miniprogram/data/experience");
+const { TRACE_POINTS, DRAFT_GROUPS, CARVE_GROUPS, COLOR_MASKS } = require("../miniprogram/data/experience");
 
 test("continuous paths can start anywhere and keep earlier coverage", () => {
   const path = densifyPath(TRACE_POINTS, 0.02); let coverage = [];
@@ -18,6 +18,16 @@ test("every carving group reaches its threshold from independent strokes", () =>
     const paths = group.paths.map((path) => densifyPath(path, 0.02)); let coverage = [];
     paths.forEach((path) => path.forEach((point) => { coverage = markPathCoverage(point, paths, coverage, 0.035, 1).coverage; }));
     assert.ok(pathCoverageProgress(paths, coverage) >= 0.85);
+  }
+});
+
+test("interest-oriented tracing completes with broad assisted strokes", () => {
+  for (const group of DRAFT_GROUPS) {
+    const paths = group.paths.map((path) => densifyPath(path, 0.026)); let coverage = [];
+    paths.forEach((path) => path.filter((_, index) => index % 3 === 0).forEach((point) => {
+      coverage = markPathCoverage(point, paths, coverage, 0.105, 5).coverage;
+    }));
+    assert.ok(pathCoverageProgress(paths, coverage) >= 0.42);
   }
 });
 

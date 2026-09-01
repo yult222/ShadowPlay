@@ -1,5 +1,5 @@
 const {
-  COPY, STAGES, MATERIALS, COLORS, DRAFT_GROUPS, TRACE_POINTS, CARVE_GROUPS,
+  COPY, STAGES, MATERIALS, COLORS, DRAFT_GROUPS, CARVE_GROUPS,
   COLOR_MASKS, PARTS, JOINT_TARGETS, ROD_TARGETS,
 } = require("../../data/experience");
 const game = require("../../utils/game");
@@ -10,8 +10,8 @@ const {
 const { hideShareMenu } = require("../../utils/page");
 const { canUseXR } = require("../../utils/xr");
 
-const TRACE_PATH = densifyPath(TRACE_POINTS, 0.014);
 const DRAFT_PATHS = DRAFT_GROUPS.map((group) => ({ ...group, paths: group.paths.map((path) => densifyPath(path, 0.018)) }));
+const TRACE_ASSIST_GROUPS = DRAFT_GROUPS.map((group) => ({ ...group, paths: group.paths.map((path) => densifyPath(path, 0.026)) }));
 const CARVE_PATHS = CARVE_GROUPS.map((group) => ({ ...group, paths: group.paths.map((path) => densifyPath(path, 0.016)) }));
 const MASKS = COLOR_MASKS.map((mask) => ({ ...mask, cells: buildMaskCells(mask.polygon, 34) }));
 
@@ -89,7 +89,7 @@ Page({
       xrEnabled: canUseXR() && ["rods", "light"].includes(stageId),
     };
     if (stageId === "draft") config.canvasGuides = DRAFT_PATHS.flatMap((group) => group.paths);
-    if (stageId === "trace") config.canvasGuides = [TRACE_PATH];
+    if (stageId === "trace") config.canvasGuides = TRACE_ASSIST_GROUPS.flatMap((group) => group.paths);
     if (stageId === "carve") config.canvasGuides = CARVE_PATHS.flatMap((group) => group.paths);
     if (["leather", "parts", "joint", "rods", "light"].includes(stageId)) Object.assign(config, this.dragScene(stageId, state));
     if (stageId === "color") config.selectedColor = state.selectedColor || "red";
@@ -267,7 +267,7 @@ Page({
     const canvas = this.selectComponent("#craft-canvas"); if (!canvas) return;
     const id = this.data.activeStageId; const state = this.stageState;
     if (id === "draft") DRAFT_PATHS.forEach((group) => canvas.redrawCoverage(group.paths, (state.coverage || {})[group.id], "#5a3c24", 4));
-    if (id === "trace") canvas.redrawCoverage([TRACE_PATH], state.coverage, "#5a3c24", 4);
+    if (id === "trace") TRACE_ASSIST_GROUPS.forEach((group) => canvas.redrawCoverage(group.paths, (state.coverage || {})[group.id], "#5a3c24", 5));
     if (id === "carve") CARVE_PATHS.forEach((group) => canvas.redrawCoverage(group.paths, (state.coverage || {})[group.id], "#4f2d19", 3));
     if (id === "color") (state.paintPoints || []).forEach((entry) => canvas.drawDot(entry.point, entry.color, 8));
   },
@@ -294,12 +294,24 @@ Page({
     this.checkpoint(progress, { coverage: all }); if (completed === DRAFT_PATHS.length) this.complete();
   },
   paintTrace(point, previous, canvas) {
-    const tolerance = Number(this.snapshot.attemptsByStage.trace || 0) >= 2 ? 0.075 : 0.052;
-    const result = markPathCoverage(point, [TRACE_PATH], this.stageState.coverage, tolerance, 2); this.stageState.coverage = result.coverage;
-    if (result.hit) { canvas.drawSegment(previous, point, "#5a3c24", 4); this.stroke.hit = true; }
-    else if (result.nearest <= tolerance * 1.65) canvas.drawSegment(previous, point, "#d5a62a", 4);
-    const progress = Math.min(100, Math.round(result.progress * 100 / 0.88)); this.checkpoint(progress, { coverage: result.coverage });
-    if (result.progress >= 0.88) this.complete();
+    const tolerance = Number(this.snapshot.attemptsByStage.trace || 0) >= 2 ? 0.14 : 0.105;
+    const all = this.stageState.coverage && !Array.isArray(this.stageState.coverage) ? this.stageState.coverage : {};
+    let hit = false; let completed = 0; let accumulated = 0;
+    TRACE_ASSIST_GROUPS.forEach((group) => {
+      const result = markPathCoverage(point, group.paths, all[group.id], tolerance, 5);
+      all[group.id] = result.coverage;
+      if (result.hit) {
+        hit = true;
+        canvas.redrawCoverage(group.paths, result.coverage, "#5a3c24", 5);
+      }
+      accumulated += Math.min(0.42, result.progress);
+      if (result.progress >= 0.42) completed += 1;
+    });
+    if (hit) this.stroke.hit = true;
+    this.stageState.coverage = all;
+    const progress = Math.round((accumulated / (TRACE_ASSIST_GROUPS.length * 0.42)) * 100);
+    this.checkpoint(progress, { coverage: all });
+    if (completed === TRACE_ASSIST_GROUPS.length) this.complete();
   },
   paintCarve(point, previous, canvas) {
     const tolerance = Number(this.snapshot.attemptsByStage.carve || 0) >= 2 ? 0.065 : 0.045;
