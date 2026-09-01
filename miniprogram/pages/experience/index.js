@@ -21,10 +21,10 @@ Page({
   start() {
     game.createSession();
     audio.playFeedback();
-    wx.navigateTo({ url: "/pages/experience/role" });
+    wx.navigateTo({ url: "/experience2d/pages/role" });
   },
-  openGallery() { wx.navigateTo({ url: "/pages/experience/gallery" }); },
-  openHelp() { wx.navigateTo({ url: "/pages/experience/help" }); },
+  openGallery() { wx.navigateTo({ url: "/experience2d/pages/gallery" }); },
+  openHelp() { wx.navigateTo({ url: "/experience2d/pages/help" }); },
   openSettings() { this.setData({ settingsVisible: true }); },
   closeSettings() { this.setData({ settingsVisible: false }); },
   changeSfx(e) {

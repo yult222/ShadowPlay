@@ -6,6 +6,7 @@ function initialSession() {
     activeStageIndex: 0,
     completedStageIds: [],
     attemptsByStage: {},
+    progressByStage: {},
     currentStageId: "",
   };
 }
@@ -43,10 +44,18 @@ function enterStage(stageId) {
 }
 
 function failStage(stageId) {
-  if (!stageId) return 0;
+  if (!stageId || session.currentStageId !== stageId) return 0;
   const count = Number(session.attemptsByStage[stageId] || 0) + 1;
   session.attemptsByStage[stageId] = count;
   return count;
+}
+
+function recordStageProgress(stageId, value) {
+  const active = getActiveStage();
+  if (!active || active.id !== stageId || session.currentStageId !== stageId) return false;
+  const next = Math.max(0, Math.min(100, Math.round(Number(value) || 0)));
+  session.progressByStage[stageId] = Math.max(Number(session.progressByStage[stageId] || 0), next);
+  return session.progressByStage[stageId];
 }
 
 function completeStage(stageId) {
@@ -55,6 +64,7 @@ function completeStage(stageId) {
     return false;
   }
   session.completedStageIds.push(stageId);
+  session.progressByStage[stageId] = 100;
   session.activeStageIndex += 1;
   session.currentStageId = "";
   return true;
@@ -74,6 +84,7 @@ module.exports = {
   selectRole,
   enterStage,
   failStage,
+  recordStageProgress,
   completeStage,
   getSnapshot,
 };

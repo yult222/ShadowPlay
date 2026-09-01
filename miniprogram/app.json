@@ -3,16 +3,22 @@
     "pages/consult/index",
     "pages/consult/detail",
     "pages/experience/index",
-    "pages/experience/role",
-    "pages/experience/workshop",
-    "pages/experience/stage",
-    "pages/experience/gallery",
-    "pages/experience/help",
-    "pages/experience/result",
     "pages/plays/index",
     "pages/settings/index",
     "pages/plays/detail",
     "pages/settings/favorites"
+  ],
+  "subPackages": [
+    {
+      "root": "experience2d",
+      "name": "experience2d",
+      "pages": ["pages/role", "pages/stage", "pages/gallery", "pages/help", "pages/result"]
+    },
+    {
+      "root": "experiencexr",
+      "name": "experiencexr",
+      "pages": ["pages/workshop", "pages/stage"]
+    }
   ],
   "window": {
     "navigationBarBackgroundColor": "#F4EFE6",

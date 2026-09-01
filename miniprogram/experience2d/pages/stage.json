@@ -1,0 +1,8 @@
+{
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "experience-shell": "/components/experience-shell/index",
+    "experience-progress": "/components/experience-progress/index",
+    "canvas-stage": "/experience2d/components/canvas-stage/index"
+  }
+}

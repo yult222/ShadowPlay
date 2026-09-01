@@ -1,3 +1,0 @@
-<experience-shell title="{{copy.gallery}}" showBack="{{true}}" backLabel="{{copy.back}}" bind:back="back">
-  <view class="gallery-list"><view wx:for="{{stages}}" wx:key="id" class="gallery-item"><image src="../../images/experience-v2/xiaodan-anchor.webp" mode="aspectFit" /><text>{{item.title}}</text></view></view>
-</experience-shell>

@@ -1,0 +1,7 @@
+<experience-shell title="{{copy.result}}">
+  <view class="result-stage">
+    <image class="result-backdrop" src="/images/experience-v3/stages/09-light.webp" mode="aspectFill" />
+    <view class="result-light"></view>
+    <image class="result-puppet" src="/images/experience-v3/xiaodan-anchor.webp" mode="aspectFit" />
+  </view>
+</experience-shell>

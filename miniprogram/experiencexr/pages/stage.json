@@ -1,0 +1,9 @@
+{
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "experience-shell": "/components/experience-shell/index",
+    "experience-progress": "/components/experience-progress/index",
+    "drag-snap-stage": "/experiencexr/components/drag-snap-stage/index",
+    "xr-stage": "/experiencexr/components/xr-stage/index"
+  }
+}

@@ -9,7 +9,7 @@ let leaveTimer = null;
 function ensureContexts() {
   if (!bgm) {
     bgm = wx.createInnerAudioContext();
-    bgm.src = "/audio/experience-bgm.wav";
+    bgm.src = "/audio/experience-bgm.m4a";
     bgm.loop = true;
     bgm.volume = 0.18;
   }

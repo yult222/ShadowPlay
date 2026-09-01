@@ -1,0 +1,26 @@
+<experience-shell title="{{stageTitle}}" showBack="{{true}}" backLabel="{{copy.back}}" bind:back="back">
+  <experience-progress value="{{progress}}" />
+  <view wx:if="{{stageId === 'draft'}}" class="stage-panel">
+    <view class="draft-board">
+      <image class="draft-anchor" src="{{anchorImage}}" mode="aspectFit" />
+      <button wx:for="{{draftNodes}}" wx:key="id" class="draft-node {{item.done ? 'done' : ''}} {{index === draftIndex ? 'active' : ''}}" data-index="{{index}}" style="{{item.style}}" bindtap="tapDraftNode"></button>
+      <view wx:for="{{draftNodes}}" wx:key="id" wx:if="{{index < draftIndex}}" class="draft-reveal" style="top:{{index * 25}}%;height:25%"></view>
+    </view>
+  </view>
+  <view wx:elif="{{stageId === 'trace'}}" class="stage-panel">
+    <view class="stage-hint">{{traceAlert}}</view>
+    <canvas-stage id="game-canvas" baseImage="{{anchorImage}}" baseClass="line-art" tone="{{traceTone}}" bind:ready="canvasReady" bind:pointstart="canvasStart" bind:pointmove="canvasMove" bind:pointend="canvasEnd" />
+  </view>
+  <view wx:elif="{{stageId === 'carve'}}" class="stage-panel">
+    <view class="stage-hint">{{copy.carveHint}}</view>
+    <canvas-stage id="game-canvas" baseImage="{{anchorImage}}" baseClass="leather-art" tone="{{carveError ? 'error' : ''}}" bind:ready="canvasReady" bind:pointstart="canvasStart" bind:pointmove="canvasMove" bind:pointend="canvasEnd" />
+  </view>
+  <view wx:elif="{{stageId === 'color'}}" class="stage-panel color-panel">
+    <view class="stage-hint">{{copy.colorHint}}</view>
+    <view class="palette"><button wx:for="{{colors}}" wx:key="id" data-id="{{item.id}}" class="color-chip {{selectedColor === item.id ? 'active' : ''}}" style="background:{{item.value}}" bindtap="selectColor">{{item.label}}</button></view>
+    <canvas-stage wx:if="{{!showColorResult}}" id="game-canvas" baseImage="{{anchorImage}}" baseClass="color-art" tone="{{boundaryFlash ? 'error' : ''}}" bind:ready="canvasReady" bind:pointstart="canvasStart" bind:pointmove="canvasMove" bind:pointend="canvasEnd">
+      <view wx:for="{{colorRegions}}" wx:key="id" class="region-outline {{item.filled ? 'filled' : ''}} {{item.recommended ? 'recommended' : ''}}" style="{{item.style}}"></view>
+    </canvas-stage>
+    <view wx:else class="color-result"><image class="before" src="{{anchorImage}}" mode="aspectFit" /><image src="{{anchorImage}}" mode="aspectFit" /><view class="rating"><view></view><view></view><view></view></view></view>
+  </view>
+</experience-shell>

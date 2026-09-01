@@ -1,0 +1,15 @@
+<experience-shell title="{{copy.workshopTitle}}" showBack="{{true}}" backLabel="{{copy.back}}" bind:back="back">
+  <view class="workshop-scene">
+    <image wx:if="{{!xrEnabled}}" class="workshop-art-static" src="/images/experience-v3/workshop.webp" mode="aspectFill" />
+    <block wx:else><image class="workshop-art" src="/images/experience-v3/workshop.webp" mode="aspectFill" /><xr-workshop progress="{{progress}}" bind:fallback="xrFallback" /></block>
+    <view class="workshop-scene-shade"></view>
+    <view class="progress-head"><text>{{copy.currentProgress}}</text><text>{{progress}}%</text></view>
+    <view class="scene-progress"><experience-progress value="{{progress}}" /></view>
+  </view>
+  <view class="process-wrap"><experience-process stages="{{stageViews}}" bind:stage="enterStage" /></view>
+  <view class="workshop-status">
+    <view><text>{{copy.currentStage}}</text><text>{{activeTitle}}</text></view>
+    <view><text>{{copy.completedStage}}</text><text>{{completedTitle}}</text></view>
+  </view>
+  <button wx:if="{{progress < 100}}" class="primary-action" data-id="{{activeId}}" bindtap="enterStage">{{copy.enterStage}}</button>
+</experience-shell>

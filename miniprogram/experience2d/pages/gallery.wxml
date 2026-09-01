@@ -1,0 +1,3 @@
+<experience-shell title="{{copy.gallery}}" showBack="{{true}}" backLabel="{{copy.back}}" bind:back="back">
+  <view class="gallery-list"><view wx:for="{{stages}}" wx:key="id" class="gallery-item {{item.id}}"><image src="{{item.art}}" mode="{{item.id === 'leather' ? 'aspectFill' : 'aspectFit'}}" /><view class="gallery-shade"></view><text>{{item.title}}</text></view></view>
+</experience-shell>

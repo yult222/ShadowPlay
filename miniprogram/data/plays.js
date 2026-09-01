@@ -2,7 +2,7 @@ module.exports = [
   {
     id: "play-shadow-ox",
     title: "影戏《牧牛图》",
-    cover: "/images/ai_example1.png",
+    cover: "/images/ai_example1.webp",
     tags: ["传统唱腔", "皮影操控", "入门推荐"],
     summaryRichText:
       "<p>《牧牛图》节奏舒缓，适合初次接触唐山皮影的观众，重点展示人物抖腕与走位。</p>",
@@ -43,7 +43,7 @@ module.exports = [
     scenes: [
       {
         title: "山路放牧",
-        img: "/images/default-goods-image.png",
+        img: "/images/default-goods-image.webp",
         desc: "通过背景层次和鼓点变化渲染晨雾山路。",
       },
     ],
@@ -51,7 +51,7 @@ module.exports = [
   {
     id: "play-wukong",
     title: "影戏《大闹天宫》选段",
-    cover: "/images/ai_example2.png",
+    cover: "/images/ai_example2.webp",
     tags: ["武打", "快节奏", "经典角色"],
     summaryRichText:
       "<p>该选段突出兵器对打与翻身动作，音轨节拍密集，适合测试播放体验。</p>",
@@ -92,7 +92,7 @@ module.exports = [
     scenes: [
       {
         title: "南天门",
-        img: "/images/default-goods-image.png",
+        img: "/images/default-goods-image.webp",
         desc: "多角色同屏调度，检验舞台层次。",
       },
     ],
@@ -100,7 +100,7 @@ module.exports = [
   {
     id: "play-mu-guiying",
     title: "影戏《穆桂英挂帅》",
-    cover: "/images/default-goods-image.png",
+    cover: "/images/default-goods-image.webp",
     tags: ["巾帼英雄", "唱腔细腻", "人物戏"],
     summaryRichText:
       "<p>《穆桂英挂帅》注重人物情绪递进，唱词更细腻，适合反复听解说。</p>",
@@ -141,7 +141,7 @@ module.exports = [
     scenes: [
       {
         title: "点将台",
-        img: "/images/default-goods-image.png",
+        img: "/images/default-goods-image.webp",
         desc: "文戏转武戏的关键场景。",
       },
     ],
