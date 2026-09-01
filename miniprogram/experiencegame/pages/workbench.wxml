@@ -11,7 +11,7 @@
           <view wx:if="{{activeStageId === 'light'}}" class="light-screen {{silhouette ? 'complete' : ''}}"></view>
           <image wx:if="{{activeStageId === 'light' && lightPhase !== 'puppet'}}" class="light-puppet {{silhouette ? 'silhouette' : ''}}" src="/images/experience-v3/xiaodan-anchor.webp" mode="aspectFit" />
         </free-drag>
-        <craft-canvas wx:if="{{activeStageId === 'draft' || activeStageId === 'trace' || activeStageId === 'carve' || activeStageId === 'color'}}" id="craft-canvas" stageId="{{activeStageId}}" baseImage="/images/experience-v3/xiaodan-anchor.webp" baseClass="{{canvasBaseClass}}" guidePaths="{{canvasGuides}}" tone="{{canvasTone}}" bind:ready="onCanvasReady" bind:strokestart="strokeStart" bind:strokemove="strokeMove" bind:strokeend="strokeEnd">
+        <craft-canvas wx:if="{{activeStageId === 'draft' || activeStageId === 'trace' || activeStageId === 'carve' || activeStageId === 'color'}}" id="craft-canvas" stageId="{{activeStageId}}" baseImage="/images/experience-v3/xiaodan-anchor.webp" baseClass="{{canvasBaseClass}}" guidePaths="{{canvasGuides}}" tone="{{canvasTone}}" bind:ready="onCanvasReady" bind:select="selectCanvas">
           <view wx:if="{{activeStageId === 'color'}}" class="palette">
             <view wx:for="{{palette}}" wx:key="id" class="palette-color {{selectedColor === item.id ? 'selected' : ''}} {{recommendedColor === item.id ? 'recommended' : ''}}" data-id="{{item.id}}" style="background:{{item.value}}" bindtap="chooseColor"><text>{{item.label}}</text></view>
           </view>

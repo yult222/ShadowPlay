@@ -38,6 +38,26 @@ const DRAFT_GROUPS = Object.freeze([
   { id: "lower", paths: [[{x:.45,y:.51},{x:.36,y:.68},{x:.40,y:.90}],[{x:.55,y:.51},{x:.64,y:.68},{x:.60,y:.90}],[{x:.40,y:.58},{x:.50,y:.70},{x:.60,y:.58}]] },
 ]);
 
+const CRAFT_TAP_TARGETS = Object.freeze({
+  draft: Object.freeze([
+    { id: "head", points: [{ x: 0.50, y: 0.15 }] },
+    { id: "torso", points: [{ x: 0.50, y: 0.38 }] },
+    { id: "sleeves", points: [{ x: 0.28, y: 0.43 }, { x: 0.72, y: 0.43 }] },
+    { id: "lower", points: [{ x: 0.50, y: 0.72 }] },
+  ]),
+  trace: Object.freeze([
+    { id: "head", points: [{ x: 0.50, y: 0.15 }] },
+    { id: "torso", points: [{ x: 0.50, y: 0.38 }] },
+    { id: "sleeves", points: [{ x: 0.28, y: 0.43 }, { x: 0.72, y: 0.43 }] },
+    { id: "lower", points: [{ x: 0.50, y: 0.72 }] },
+  ]),
+  carve: Object.freeze([
+    { id: "outer", points: [{ x: 0.50, y: 0.12 }] },
+    { id: "pattern", points: [{ x: 0.50, y: 0.50 }] },
+    { id: "openwork", points: [{ x: 0.29, y: 0.48 }, { x: 0.71, y: 0.48 }] },
+  ]),
+});
+
 const TRACE_POINTS = Object.freeze([
   [0.489,0.092],[0.421,0.116],[0.378,0.139],[0.349,0.162],[0.356,0.185],[0.370,0.208],[0.422,0.232],[0.416,0.255],[0.438,0.278],[0.355,0.302],[0.312,0.325],[0.252,0.348],[0.223,0.371],[0.121,0.395],[0.077,0.418],[0.039,0.441],[0.031,0.464],[0.087,0.487],[0.086,0.511],[0.112,0.534],[0.133,0.558],[0.327,0.581],[0.305,0.604],[0.278,0.627],[0.253,0.650],[0.246,0.674],[0.185,0.697],[0.155,0.721],[0.190,0.744],[0.272,0.767],[0.437,0.790],[0.441,0.813],[0.428,0.837],[0.385,0.860],[0.386,0.883],[0.567,0.907],[0.576,0.907],[0.596,0.883],[0.601,0.860],[0.568,0.837],[0.565,0.813],[0.778,0.790],[0.767,0.767],[0.851,0.744],[0.889,0.721],[0.866,0.697],[0.832,0.674],[0.793,0.650],[0.791,0.627],[0.774,0.604],[0.728,0.581],[0.868,0.558],[0.883,0.534],[0.904,0.511],[0.892,0.487],[0.977,0.464],[0.943,0.441],[0.907,0.418],[0.829,0.395],[0.750,0.371],[0.737,0.348],[0.687,0.325],[0.649,0.302],[0.554,0.278],[0.574,0.255],[0.665,0.232],[0.664,0.208],[0.665,0.185],[0.658,0.162],[0.669,0.139],[0.634,0.116],[0.494,0.092],[0.489,0.092],
 ].map(([x,y]) => Object.freeze({x,y})));
@@ -87,4 +107,4 @@ const JOINT_TARGETS = Object.freeze([
 const ROD_TARGETS = Object.freeze([{ x: 0.23, y: 0.45 }, { x: 0.50, y: 0.27 }, { x: 0.77, y: 0.45 }]);
 const COPY_ALLOWLIST = Object.freeze([...Object.values(COPY), ...STAGES.map((item) => item.title), ...MATERIALS.map((item) => item.label), ...COLORS.map((item) => item.label)]);
 
-module.exports = { COPY, STAGES, MATERIALS, COLORS, DRAFT_GROUPS, TRACE_POINTS, CARVE_PATHS, CARVE_GROUPS, COLOR_MASKS, PARTS, JOINT_TARGETS, ROD_TARGETS, COPY_ALLOWLIST };
+module.exports = { COPY, STAGES, MATERIALS, COLORS, DRAFT_GROUPS, CRAFT_TAP_TARGETS, TRACE_POINTS, CARVE_PATHS, CARVE_GROUPS, COLOR_MASKS, PARTS, JOINT_TARGETS, ROD_TARGETS, COPY_ALLOWLIST };

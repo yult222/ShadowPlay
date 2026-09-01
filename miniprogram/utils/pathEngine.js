@@ -85,6 +85,20 @@ function paintMask(point, cells, painted, radius = 0.055) {
   return { painted: Array.from(next), progress: cells && cells.length ? next.size / cells.length : 0 };
 }
 
+function pickTapTarget(point, targets, completedIds = [], radius = 0.19) {
+  if (!point) return null;
+  const completed = new Set(completedIds || []);
+  let nearest = null;
+  for (const target of targets || []) {
+    if (completed.has(target.id)) continue;
+    for (const anchor of target.points || []) {
+      const distance = Math.hypot(point.x - anchor.x, point.y - anchor.y);
+      if (distance <= radius && (!nearest || distance < nearest.distance)) nearest = { id: target.id, distance };
+    }
+  }
+  return nearest && nearest.id;
+}
+
 module.exports = {
   densifyPath,
   normalizeCoverage,
@@ -93,4 +107,5 @@ module.exports = {
   pointInPolygon,
   buildMaskCells,
   paintMask,
+  pickTapTarget,
 };

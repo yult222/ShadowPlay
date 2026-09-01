@@ -1,7 +1,7 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const { densifyPath, markPathCoverage, pathCoverageProgress, pointInPolygon, buildMaskCells, paintMask } = require("../miniprogram/utils/pathEngine");
-const { TRACE_POINTS, DRAFT_GROUPS, CARVE_GROUPS, COLOR_MASKS } = require("../miniprogram/data/experience");
+const { densifyPath, markPathCoverage, pathCoverageProgress, pointInPolygon, buildMaskCells, paintMask, pickTapTarget } = require("../miniprogram/utils/pathEngine");
+const { TRACE_POINTS, CRAFT_TAP_TARGETS, CARVE_GROUPS, COLOR_MASKS } = require("../miniprogram/data/experience");
 
 test("continuous paths can start anywhere and keep earlier coverage", () => {
   const path = densifyPath(TRACE_POINTS, 0.02); let coverage = [];
@@ -21,13 +21,15 @@ test("every carving group reaches its threshold from independent strokes", () =>
   }
 });
 
-test("interest-oriented tracing completes with broad assisted strokes", () => {
-  for (const group of DRAFT_GROUPS) {
-    const paths = group.paths.map((path) => densifyPath(path, 0.026)); let coverage = [];
-    paths.forEach((path) => path.filter((_, index) => index % 3 === 0).forEach((point) => {
-      coverage = markPathCoverage(point, paths, coverage, 0.105, 5).coverage;
-    }));
-    assert.ok(pathCoverageProgress(paths, coverage) >= 0.42);
+test("craft stages select whole groups with taps instead of freehand strokes", () => {
+  for (const stageId of ["draft", "trace", "carve"]) {
+    const targets = CRAFT_TAP_TARGETS[stageId]; const selected = [];
+    for (const target of targets) {
+      const picked = pickTapTarget(target.points[0], targets, selected, 0.2);
+      assert.equal(picked, target.id); selected.push(picked);
+    }
+    assert.equal(selected.length, targets.length);
+    assert.equal(pickTapTarget(targets[0].points[0], targets, selected, 0.2), null);
   }
 });
 

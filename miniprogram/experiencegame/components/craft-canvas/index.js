@@ -35,9 +35,7 @@ Component({
       const touches = changed ? event.changedTouches : event.touches;
       return toNormalizedPoint(touches && touches[0], this.data.rect);
     },
-    start(event) { const point = this.point(event); if (point) this.triggerEvent("strokestart", point); },
-    move(event) { const point = this.point(event); if (point) this.triggerEvent("strokemove", point); },
-    end(event) { this.triggerEvent("strokeend", this.point(event, true) || {}); },
+    select(event) { const point = this.point(event); if (point) this.triggerEvent("select", point); },
     clear() { if (this.surface) this.surface.context.clearRect(0, 0, this.surface.width, this.surface.height); },
     drawGuides() {
       if (!this.surface) return;
@@ -67,6 +65,19 @@ Component({
         const marked = new Set((coverage && coverage[pathIndex]) || []);
         marked.forEach((segment) => this.drawSegment(path[segment], path[segment + 1], color, lineWidth));
       });
+    },
+    drawPaths(paths, color = "#5a3c24", lineWidth = 4) {
+      for (const path of paths || []) {
+        if (!path || path.length < 2) continue;
+        for (let index = 0; index < path.length - 1; index += 1) this.drawSegment(path[index], path[index + 1], color, lineWidth);
+      }
+    },
+    fillPolygon(polygon, color, alpha = 0.78) {
+      if (!this.surface || !polygon || polygon.length < 3) return;
+      const { context, width, height } = this.surface;
+      context.save(); context.globalAlpha = alpha; context.beginPath(); context.moveTo(polygon[0].x * width, polygon[0].y * height);
+      for (let index = 1; index < polygon.length; index += 1) context.lineTo(polygon[index].x * width, polygon[index].y * height);
+      context.closePath(); context.fillStyle = color; context.fill(); context.strokeStyle = "rgba(83,46,24,.72)"; context.lineWidth = 2; context.stroke(); context.restore();
     },
   },
 });

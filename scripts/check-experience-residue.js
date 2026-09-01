@@ -42,6 +42,13 @@ if (appSource.includes("experiencexr") || appSource.includes("pages/stage")) thr
 const workbench = fs.readFileSync("miniprogram/experiencegame/pages/workbench.wxml", "utf8");
 if (!workbench.includes("experience-rail") || !workbench.includes("workbench-portrait.webp")) throw new Error("persistent workbench frame is missing");
 if (workbench.includes("draft-node") || workbench.includes("<button")) throw new Error("native draft hotspot remains");
+if (workbench.includes("strokemove") || workbench.includes("strokestart")) throw new Error("freehand craft gesture remains");
+const workbenchLogic = fs.readFileSync("miniprogram/experiencegame/pages/workbench.js", "utf8");
+for (const forbidden of ["paintTrace", "paintDraft", "paintCarve", "paintPoints", "markPathCoverage"]) {
+  if (workbenchLogic.includes(forbidden)) throw new Error(`freehand craft logic remains: ${forbidden}`);
+}
+const craftSurface = fs.readFileSync("miniprogram/experiencegame/components/craft-canvas/index.wxml", "utf8");
+if (craftSurface.includes("catchtouchmove") || craftSurface.includes("strokemove")) throw new Error("continuous drawing listener remains");
 const rail = fs.readFileSync("miniprogram/components/experience-rail/index.wxml", "utf8");
 if (!rail.includes('wx:for="{{stages}}"')) throw new Error("nine-stage rail is not data-driven");
 console.log("LEGACY_RESIDUE_OK");

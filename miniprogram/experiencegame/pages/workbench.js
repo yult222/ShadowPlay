@@ -1,11 +1,11 @@
 const {
-  COPY, STAGES, MATERIALS, COLORS, DRAFT_GROUPS, CARVE_GROUPS,
+  COPY, STAGES, MATERIALS, COLORS, DRAFT_GROUPS, CRAFT_TAP_TARGETS, CARVE_GROUPS,
   COLOR_MASKS, PARTS, JOINT_TARGETS, ROD_TARGETS,
 } = require("../../data/experience");
 const game = require("../../utils/game");
 const audio = require("../../services/experienceAudio");
 const {
-  densifyPath, markPathCoverage, pathCoverageProgress, pointInPolygon, buildMaskCells, paintMask,
+  densifyPath, pointInPolygon, pickTapTarget,
 } = require("../../utils/pathEngine");
 const { hideShareMenu } = require("../../utils/page");
 const { canUseXR } = require("../../utils/xr");
@@ -13,7 +13,7 @@ const { canUseXR } = require("../../utils/xr");
 const DRAFT_PATHS = DRAFT_GROUPS.map((group) => ({ ...group, paths: group.paths.map((path) => densifyPath(path, 0.018)) }));
 const TRACE_ASSIST_GROUPS = DRAFT_GROUPS.map((group) => ({ ...group, paths: group.paths.map((path) => densifyPath(path, 0.026)) }));
 const CARVE_PATHS = CARVE_GROUPS.map((group) => ({ ...group, paths: group.paths.map((path) => densifyPath(path, 0.016)) }));
-const MASKS = COLOR_MASKS.map((mask) => ({ ...mask, cells: buildMaskCells(mask.polygon, 34) }));
+const PATHS_BY_STAGE = Object.freeze({ draft: DRAFT_PATHS, trace: TRACE_ASSIST_GROUPS, carve: CARVE_PATHS });
 
 function deepCopy(value) { return JSON.parse(JSON.stringify(value)); }
 function clamp(value, min, max) { return Math.max(min, Math.min(max, value)); }
@@ -80,7 +80,6 @@ Page({
     }, 220);
   },
   prepareStage(stageId) {
-    this.stroke = null;
     const state = deepCopy((this.snapshot.stageStateById && this.snapshot.stageStateById[stageId]) || {});
     this.stageState = state;
     const config = {
@@ -266,72 +265,40 @@ Page({
   onCanvasReady() {
     const canvas = this.selectComponent("#craft-canvas"); if (!canvas) return;
     const id = this.data.activeStageId; const state = this.stageState;
-    if (id === "draft") DRAFT_PATHS.forEach((group) => canvas.redrawCoverage(group.paths, (state.coverage || {})[group.id], "#5a3c24", 4));
-    if (id === "trace") TRACE_ASSIST_GROUPS.forEach((group) => canvas.redrawCoverage(group.paths, (state.coverage || {})[group.id], "#5a3c24", 5));
-    if (id === "carve") CARVE_PATHS.forEach((group) => canvas.redrawCoverage(group.paths, (state.coverage || {})[group.id], "#4f2d19", 3));
-    if (id === "color") (state.paintPoints || []).forEach((entry) => canvas.drawDot(entry.point, entry.color, 8));
+    if (PATHS_BY_STAGE[id]) {
+      const selected = new Set(state.selectedGroups || []);
+      PATHS_BY_STAGE[id].filter((group) => selected.has(group.id)).forEach((group) => canvas.drawPaths(group.paths, id === "trace" ? "#351d12" : id === "carve" ? "#4f2d19" : "#5a3c24", id === "trace" ? 8 : id === "carve" ? 4 : 5));
+    }
+    if (id === "color") {
+      const filled = new Set(state.filledMaskIds || []);
+      COLOR_MASKS.filter((mask) => filled.has(mask.id)).forEach((mask) => {
+        const color = COLORS.find((candidate) => candidate.id === mask.colorId); if (color) canvas.fillPolygon(mask.polygon, color.value);
+      });
+    }
   },
-  strokeStart(event) { this.stroke = { previous: event.detail, hit: false, moved: false }; this.paintPoint(event.detail); },
-  strokeMove(event) { if (!this.stroke) return; this.stroke.moved = true; this.paintPoint(event.detail); this.stroke.previous = event.detail; },
-  strokeEnd() { if (!this.stroke) return; if (!this.stroke.hit) this.fail(); this.stroke = null; },
-  paintPoint(point) {
+  selectCanvas(event) {
+    const point = event.detail;
     const id = this.data.activeStageId; if (!["draft", "trace", "carve", "color"].includes(id)) return;
     const canvas = this.selectComponent("#craft-canvas"); if (!canvas) return;
-    const previous = this.stroke && this.stroke.previous ? this.stroke.previous : point;
-    if (id === "draft") return this.paintDraft(point, previous, canvas);
-    if (id === "trace") return this.paintTrace(point, previous, canvas);
-    if (id === "carve") return this.paintCarve(point, previous, canvas);
-    return this.paintColor(point, canvas);
+    if (id === "color") return this.selectColorRegion(point, canvas);
+    const selected = this.stageState.selectedGroups || [];
+    const targetId = pickTapTarget(point, CRAFT_TAP_TARGETS[id], selected, id === "carve" ? 0.20 : 0.21);
+    if (!targetId) return;
+    const next = Array.from(new Set([...selected, targetId]));
+    const group = PATHS_BY_STAGE[id].find((candidate) => candidate.id === targetId);
+    if (group) canvas.drawPaths(group.paths, id === "trace" ? "#351d12" : id === "carve" ? "#4f2d19" : "#5a3c24", id === "trace" ? 8 : id === "carve" ? 4 : 5);
+    this.stageState.selectedGroups = next;
+    this.checkpoint(Math.round((next.length / CRAFT_TAP_TARGETS[id].length) * 100), { selectedGroups: next });
+    if (next.length === CRAFT_TAP_TARGETS[id].length) setTimeout(() => this.complete(), 260);
   },
-  paintDraft(point, previous, canvas) {
-    const all = this.stageState.coverage || {}; let hit = false; let completed = 0; let totalProgress = 0;
-    DRAFT_PATHS.forEach((group) => {
-      const result = markPathCoverage(point, group.paths, all[group.id], 0.065, 2); all[group.id] = result.coverage; hit = hit || result.hit;
-      totalProgress += result.progress; if (result.progress >= 0.7) completed += 1;
-    });
-    if (hit) { canvas.drawSegment(previous, point, "#5a3c24", 5); this.stroke.hit = true; }
-    this.stageState.coverage = all; const progress = Math.min(100, Math.round((totalProgress / DRAFT_PATHS.length) * 100 / 0.7));
-    this.checkpoint(progress, { coverage: all }); if (completed === DRAFT_PATHS.length) this.complete();
-  },
-  paintTrace(point, previous, canvas) {
-    const tolerance = Number(this.snapshot.attemptsByStage.trace || 0) >= 2 ? 0.14 : 0.105;
-    const all = this.stageState.coverage && !Array.isArray(this.stageState.coverage) ? this.stageState.coverage : {};
-    let hit = false; let completed = 0; let accumulated = 0;
-    TRACE_ASSIST_GROUPS.forEach((group) => {
-      const result = markPathCoverage(point, group.paths, all[group.id], tolerance, 5);
-      all[group.id] = result.coverage;
-      if (result.hit) {
-        hit = true;
-        canvas.redrawCoverage(group.paths, result.coverage, "#5a3c24", 5);
-      }
-      accumulated += Math.min(0.42, result.progress);
-      if (result.progress >= 0.42) completed += 1;
-    });
-    if (hit) this.stroke.hit = true;
-    this.stageState.coverage = all;
-    const progress = Math.round((accumulated / (TRACE_ASSIST_GROUPS.length * 0.42)) * 100);
-    this.checkpoint(progress, { coverage: all });
-    if (completed === TRACE_ASSIST_GROUPS.length) this.complete();
-  },
-  paintCarve(point, previous, canvas) {
-    const tolerance = Number(this.snapshot.attemptsByStage.carve || 0) >= 2 ? 0.065 : 0.045;
-    const all = this.stageState.coverage || {}; let hit = false; let completed = 0; let sum = 0;
-    CARVE_PATHS.forEach((group) => { const result = markPathCoverage(point, group.paths, all[group.id], tolerance, 2); all[group.id] = result.coverage; hit = hit || result.hit; sum += result.progress; if (result.progress >= 0.85) completed += 1; });
-    canvas.drawSegment(previous, point, hit ? "#4f2d19" : "#a62b23", hit ? 3 : 4); if (hit) this.stroke.hit = true;
-    this.stageState.coverage = all; this.checkpoint(Math.min(100, Math.round((sum / CARVE_PATHS.length) * 100 / 0.85)), { coverage: all });
-    if (completed === CARVE_PATHS.length) this.complete();
-  },
-  paintColor(point, canvas) {
-    const mask = MASKS.find((candidate) => pointInPolygon(point, candidate.polygon)); if (!mask) return;
+  selectColorRegion(point, canvas) {
+    const mask = COLOR_MASKS.find((candidate) => pointInPolygon(point, candidate.polygon)); if (!mask) return;
     const selected = COLORS.find((color) => color.id === this.data.selectedColor); if (!selected) return;
     if (mask.colorId !== selected.id) { this.fail(); this.setData({ recommendedColor: mask.colorId }); setTimeout(() => this.setData({ recommendedColor: "" }), 420); return; }
-    const painted = this.stageState.painted || {}; const result = paintMask(point, mask.cells, painted[mask.id], 0.06); painted[mask.id] = result.painted;
-    const paintPoints = this.stageState.paintPoints || []; if (!paintPoints.length || Math.hypot(point.x - paintPoints[paintPoints.length - 1].point.x, point.y - paintPoints[paintPoints.length - 1].point.y) > 0.018) paintPoints.push({ point, color: selected.value });
-    canvas.drawDot(point, selected.value, 9); this.stroke.hit = true; this.stageState.painted = painted; this.stageState.paintPoints = paintPoints.slice(-620);
-    const completeCount = MASKS.filter((candidate) => ((painted[candidate.id] || []).length / candidate.cells.length) >= 0.7).length;
-    const sum = MASKS.reduce((value, candidate) => value + Math.min(0.7, (painted[candidate.id] || []).length / candidate.cells.length), 0);
-    this.checkpoint(Math.round((sum / (MASKS.length * 0.7)) * 100), { painted, paintPoints: this.stageState.paintPoints, selectedColor: selected.id });
-    if (completeCount === MASKS.length) this.complete();
+    const filledMaskIds = Array.from(new Set([...(this.stageState.filledMaskIds || []), mask.id]));
+    canvas.fillPolygon(mask.polygon, selected.value); this.stageState.filledMaskIds = filledMaskIds;
+    this.checkpoint(Math.round((filledMaskIds.length / COLOR_MASKS.length) * 100), { filledMaskIds, selectedColor: selected.id });
+    if (filledMaskIds.length === COLOR_MASKS.length) setTimeout(() => this.complete(), 260);
   },
   toggleRail() { this.setData({ railExpanded: !this.data.railExpanded }); },
   selectRail() { this.setData({ railExpanded: false }); },

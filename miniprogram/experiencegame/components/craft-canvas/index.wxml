@@ -1,5 +1,5 @@
 <view class="craft-canvas {{tone}}">
   <image class="craft-base {{baseClass}}" src="{{baseImage}}" mode="aspectFit" />
-  <canvas id="craft-surface" type="2d" class="craft-surface" disable-scroll="{{true}}" catchtouchstart="start" catchtouchmove="move" catchtouchend="end" catchtouchcancel="end"></canvas>
+  <canvas id="craft-surface" type="2d" class="craft-surface" disable-scroll="{{true}}" catchtouchstart="select"></canvas>
   <slot></slot>
 </view>

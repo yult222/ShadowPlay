@@ -2,8 +2,8 @@ const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
 const automator = require("miniprogram-automator");
-const { DRAFT_GROUPS, TRACE_POINTS, CARVE_GROUPS, COLOR_MASKS, PARTS } = require("../miniprogram/data/experience");
-const { densifyPath, buildMaskCells, paintMask } = require("../miniprogram/utils/pathEngine");
+const { CRAFT_TAP_TARGETS, COLOR_MASKS, PARTS } = require("../miniprogram/data/experience");
+const { buildMaskCells } = require("../miniprogram/utils/pathEngine");
 
 const ROOT = path.resolve(__dirname, "..");
 const CLI = "/Applications/Develop/wechatwebdevtools.app/Contents/MacOS/cli";
@@ -21,25 +21,10 @@ async function callPage(miniProgram, method, argument) {
 async function pageData(miniProgram, name) {
   return miniProgram.evaluate((key) => { const pages = getCurrentPages(); return pages[pages.length - 1].data[key]; }, name);
 }
-async function stroke(miniProgram, pathPoints) {
-  if (!pathPoints.length) return;
-  await callPage(miniProgram, "strokeStart", { detail: pathPoints[0] });
-  for (let index = 1; index < pathPoints.length; index += 1) await callPage(miniProgram, "strokeMove", { detail: pathPoints[index] });
-  await callPage(miniProgram, "strokeEnd", { detail: pathPoints[pathPoints.length - 1] });
+async function selectCanvas(miniProgram, point) {
+  await callPage(miniProgram, "selectCanvas", { detail: point });
 }
-function maskSample(mask) {
-  const cells = buildMaskCells(mask.polygon, 34); let painted = []; const points = [];
-  for (let index = 0; index < cells.length && painted.length / cells.length < 0.74; index += 3) {
-    points.push(cells[index]); painted = paintMask(cells[index], cells, painted, 0.06).painted;
-  }
-  if (painted.length / cells.length < 0.7) {
-    for (const cell of cells) {
-      points.push(cell); painted = paintMask(cell, cells, painted, 0.06).painted;
-      if (painted.length / cells.length >= 0.74) break;
-    }
-  }
-  return points;
-}
+function maskPoint(mask) { const cells = buildMaskCells(mask.polygon, 34); return cells[Math.floor(cells.length / 2)]; }
 
 (async () => {
   fs.mkdirSync(OUTPUT, { recursive: true });
@@ -68,21 +53,21 @@ function maskSample(mask) {
     await callPage(miniProgram, "onDrop", { detail: { itemId: "B", targetId: "inspect" } }); await wait(620);
     assert.equal(await pageData(miniProgram, "activeStageId"), "draft");
 
-    for (const group of DRAFT_GROUPS) for (const points of group.paths) await stroke(miniProgram, densifyPath(points, 0.018));
+    for (const target of CRAFT_TAP_TARGETS.draft) await selectCanvas(miniProgram, target.points[0]);
     await wait(500); assert.equal(await pageData(miniProgram, "activeStageId"), "trace");
     await miniProgram.screenshot({ path: path.join(OUTPUT, "workbench-trace-guide.png") });
-    await stroke(miniProgram, [{ x: 0.02, y: 0.02 }, { x: 0.03, y: 0.03 }]);
-    const assistedHead = densifyPath(DRAFT_GROUPS[0].paths[0], 0.026).map((point) => ({ x: point.x + 0.045, y: point.y + 0.025 }));
-    await stroke(miniProgram, assistedHead);
+    await selectCanvas(miniProgram, { x: 0.02, y: 0.02 });
+    await selectCanvas(miniProgram, CRAFT_TAP_TARGETS.trace[0].points[0]);
+    await wait(220);
     await miniProgram.screenshot({ path: path.join(OUTPUT, "workbench-trace-assisted.png") });
-    for (const group of DRAFT_GROUPS) for (const points of group.paths) await stroke(miniProgram, densifyPath(points, 0.026));
+    for (const target of CRAFT_TAP_TARGETS.trace.slice(1)) await selectCanvas(miniProgram, target.points[0]);
     await wait(500); assert.equal(await pageData(miniProgram, "activeStageId"), "carve");
 
-    for (const group of CARVE_GROUPS) for (const points of group.paths) await stroke(miniProgram, densifyPath(points, 0.016));
+    for (const target of CRAFT_TAP_TARGETS.carve) await selectCanvas(miniProgram, target.points[0]);
     await wait(500); assert.equal(await pageData(miniProgram, "activeStageId"), "color");
     for (const mask of COLOR_MASKS) {
       await callPage(miniProgram, "chooseColor", { currentTarget: { dataset: { id: mask.colorId } } });
-      await stroke(miniProgram, maskSample(mask));
+      await selectCanvas(miniProgram, maskPoint(mask));
     }
     await wait(650); assert.equal(await pageData(miniProgram, "activeStageId"), "parts");
 
