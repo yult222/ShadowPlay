@@ -1,7 +1,8 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const geometry = require("../miniprogram/utils/geometry");
-const { COLOR_REGIONS } = require("../miniprogram/data/experience");
+const { COLOR_MASKS } = require("../miniprogram/data/experience");
+const { pointInPolygon } = require("../miniprogram/utils/pathEngine");
 
 test("page coordinates convert to stage-local coordinates", () => {
   assert.deepEqual(geometry.toLocalPoint({ clientX: 150, clientY: 230 }, { left: 30, top: 80 }), { x: 120, y: 150 });
@@ -33,11 +34,12 @@ test("responsive boards fit all required phone viewports", () => {
   }
 });
 
-test("all eleven paint masks accept their center and reject distant points", () => {
-  assert.equal(COLOR_REGIONS.length, 11);
-  for (const region of COLOR_REGIONS) {
-    assert.equal(geometry.isPointInEllipse({ x: region.x, y: region.y }, region), true);
-    assert.equal(geometry.isPointInEllipse({ x: region.x + region.rx * 1.5, y: region.y }, region), false);
+test("all eleven polygon paint masks accept internal cells and reject distant points", () => {
+  assert.equal(COLOR_MASKS.length, 11);
+  for (const region of COLOR_MASKS) {
+    const center = region.polygon.reduce((point, value) => ({ x: point.x + value.x / region.polygon.length, y: point.y + value.y / region.polygon.length }), { x: 0, y: 0 });
+    assert.equal(pointInPolygon(center, region.polygon), true);
+    assert.equal(pointInPolygon({ x: 0.01, y: 0.99 }, region.polygon), false);
   }
 });
 

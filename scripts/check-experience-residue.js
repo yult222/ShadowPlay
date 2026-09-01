@@ -32,9 +32,16 @@ for (const forbidden of ["placeholder", "experience-v2", "test3D4WeMi", "工程�
   for (const file of [
     ...sourceFiles("miniprogram/pages/experience"),
     ...sourceFiles("miniprogram/experience2d"),
-    ...sourceFiles("miniprogram/experiencexr"),
+    ...sourceFiles("miniprogram/experiencegame"),
   ]) {
     if (fs.readFileSync(file, "utf8").includes(forbidden)) throw new Error(`forbidden experience token remains: ${file} (${forbidden})`);
   }
 }
+const appSource = fs.readFileSync("miniprogram/app.json", "utf8");
+if (appSource.includes("experiencexr") || appSource.includes("pages/stage")) throw new Error("old multi-page stage route remains");
+const workbench = fs.readFileSync("miniprogram/experiencegame/pages/workbench.wxml", "utf8");
+if (!workbench.includes("experience-rail") || !workbench.includes("workbench-portrait.webp")) throw new Error("persistent workbench frame is missing");
+if (workbench.includes("draft-node") || workbench.includes("<button")) throw new Error("native draft hotspot remains");
+const rail = fs.readFileSync("miniprogram/components/experience-rail/index.wxml", "utf8");
+if (!rail.includes('wx:for="{{stages}}"')) throw new Error("nine-stage rail is not data-driven");
 console.log("LEGACY_RESIDUE_OK");

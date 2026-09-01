@@ -14,7 +14,7 @@ for (const page of pages) {
   }
 }
 
-const sourceRoots = ["pages/experience", "experience2d", "experiencexr", "data/experience.js"];
+const sourceRoots = ["pages/experience", "experience2d", "experiencegame", "data/experience.js"];
 function collect(target, output = []) {
   const stat = fs.statSync(target);
   if (stat.isFile()) return output.concat(target);
@@ -26,7 +26,7 @@ function collect(target, output = []) {
   return output;
 }
 const files = sourceRoots.flatMap((entry) => collect(path.join(ROOT, entry)));
-const absoluteResource = /["'](\/(?:images|audio|experience2d|experiencexr)\/[^"']+\.(?:webp|png|wav|m4a|glb))["']/g;
+const absoluteResource = /["'](\/(?:images|audio|experience2d|experiencegame)\/[^"']+\.(?:webp|png|wav|m4a|glb))["']/g;
 for (const file of files) {
   const contents = fs.readFileSync(file, "utf8");
   for (const match of contents.matchAll(absoluteResource)) {
@@ -35,15 +35,6 @@ for (const file of files) {
     if (fs.statSync(target).size < 1024) throw new Error(`resource is unexpectedly small: ${target}`);
   }
 }
-
-const glbPath = path.join(ROOT, "experiencexr", "xr-assets", "experience-kit.glb");
-const glb = fs.readFileSync(glbPath);
-if (glb.toString("ascii", 0, 4) !== "glTF" || glb.readUInt32LE(4) !== 2 || glb.readUInt32LE(8) !== glb.length) {
-  throw new Error("invalid GLB header");
-}
-const jsonLength = glb.readUInt32LE(12);
-const glbJson = JSON.parse(glb.toString("utf8", 20, 20 + jsonLength).trim());
-if ((glbJson.nodes || []).length < 5 || (glbJson.meshes || []).length < 3) throw new Error("GLB scene is incomplete");
 
 const stageArt = fs.readdirSync(path.join(ROOT, "images", "experience-v3", "stages")).filter((name) => name.endsWith(".webp"));
 const parts = fs.readdirSync(path.join(ROOT, "images", "experience-v3", "parts")).filter((name) => name.endsWith(".webp"));

@@ -18,7 +18,9 @@ test("game completes all nine stages without skipping", () => {
   game.selectRole("xiaodan");
   for (const [index, stage] of STAGES.entries()) {
     assert.equal(game.enterStage(stage.id), true);
-    assert.equal(game.completeStage(stage.id), true);
+    const outcome = game.completeStage(stage.id);
+    assert.equal(outcome.completed, true);
+    assert.equal(outcome.finished, index === STAGES.length - 1);
     assert.equal(game.completeStage(stage.id), false);
     const snapshot = game.getSnapshot();
     assert.equal(snapshot.completedStageIds.length, index + 1);
@@ -33,7 +35,7 @@ test("failure counts and reset are deterministic", () => {
   game.selectRole("xiaodan");
   for (const stageId of ["leather", "draft"]) {
     assert.equal(game.enterStage(stageId), true);
-    assert.equal(game.completeStage(stageId), true);
+    assert.equal(game.completeStage(stageId).completed, true);
   }
   assert.equal(game.failStage("trace"), 0);
   assert.equal(game.enterStage("trace"), true);
@@ -48,6 +50,17 @@ test("failure counts and reset are deterministic", () => {
   assert.deepEqual(game.getSnapshot().completedStageIds, []);
   assert.equal(game.getSnapshot().selectedRole, "");
   assert.deepEqual(game.getSnapshot().progressByStage, {});
+  assert.deepEqual(game.getSnapshot().stageStateById, {});
+});
+
+test("stage checkpoints merge and survive component reconstruction", () => {
+  game.createSession(); game.selectRole("xiaodan"); game.enterStage("leather");
+  assert.equal(game.recordStageProgress("leather", 35, { failures: 1, selected: "" }), 35);
+  assert.equal(game.recordStageProgress("leather", 20, { failures: 2, hinted: "B" }), 35);
+  const snapshot = game.getSnapshot();
+  assert.equal(snapshot.liveProgress, 4);
+  assert.deepEqual(snapshot.stageStateById.leather, { failures: 2, selected: "", hinted: "B" });
+  assert.equal(game.recordStageProgress("draft", 60, { coverage: [] }), false);
 });
 
 test("entering a stale or future stage never changes progression", () => {

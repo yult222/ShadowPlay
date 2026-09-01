@@ -5,10 +5,12 @@ const { COPY_ALLOWLIST } = require("../miniprogram/data/experience");
 const roots = [
   "miniprogram/pages/experience",
   "miniprogram/experience2d",
-  "miniprogram/experiencexr",
+  "miniprogram/experiencegame",
   "miniprogram/components/experience-shell",
   "miniprogram/components/experience-progress",
   "miniprogram/components/experience-process",
+  "miniprogram/components/experience-button",
+  "miniprogram/components/experience-rail",
   "miniprogram/components/common-popup",
 ];
 

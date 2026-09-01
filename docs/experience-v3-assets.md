@@ -14,6 +14,7 @@
 | 丑角角色卡 | 完整正面丑角唐山皮影角色卡画面，传统丑角造型与关节结构清晰，宣纸与皮革质感；深棕、朱红、少量金色与青色；单个角色居中，禁止文字、徽标、水印和额外人物。 | `exec-80b68675-e4b1-425c-b266-cd087c1cb5c6.png` | `miniprogram/images/experience-v3/chou-card.webp` |
 | 木质工坊 | 唐山皮影制作工坊横版场景，木质工作台、皮料、刻刀、颜料、连接件和操纵杆自然陈列，暖色灯光与宣纸背景，深棕、朱红、少量金色和青色；无人物，禁止文字、徽标、水印。 | `exec-8d0ee2c0-dd2f-468b-b8b8-46f3a835ef35.png` | `miniprogram/images/experience-v3/workshop.webp` |
 | 识皮工作台 | 俯视木质皮影工作台，四张视觉差异明确的半透明皮料：破损、平整均匀、厚度不均和透光不足；真实皮革纤维与暖色透光，禁止人物、文字、字母、徽标和水印。 | `exec-1d0dda7f-576b-424f-85e5-a34d5345de51.png` | `miniprogram/images/experience-v3/leather-board.webp` |
+| 持续工作台 | Use case: stylized-concept。竖版 9:16 唐山皮影工坊，略俯视；中央 62% 为平整宣纸与皮革操作面，刻刀、画笔、颜料、皮料、连接件和三根操纵杆仅沿左右和底部边缘摆放，上方远景为暖灯与灯幕；深棕、暖宣纸、朱红、少量青绿和古金；无人物、皮影、文字、数字、徽标、水印、界面、按钮和拼贴。 | `exec-05a9a72f-be36-4933-9e02-640b06daaa48.png` | `miniprogram/images/experience-v3/workbench-portrait.webp` |
 
 ImageGen 原图目录：`/Users/lty/.codex/generated_images/01a03f0e-e1d4-77f2-a1b7-2062cb6e2e14/`。
 
@@ -25,10 +26,11 @@ ImageGen 原图目录：`/Users/lty/.codex/generated_images/01a03f0e-e1d4-77f2-a
 | 小旦标准图 | 1 | 768×1152 | 293,444 B |
 | 武生、丑角角色卡 | 2 | 520×780 | 59,798 B / 47,638 B |
 | 工坊与识皮工作台 | 2 | 960×540 / 800×800 | 69,836 B / 92,322 B |
+| 持续工作台 | 1 | 750×1333 | 103,858 B |
 | 九工序画面 | 9 | 420×300 | 15,458—30,098 B/张 |
 | 小旦真实部件 | 11 | 按对应结构裁切，最长边不超过 360 px | 24,964—41,228 B/张 |
 | A—D 皮料 | 4 | 360×180 | 8,134—16,554 B/张 |
 
 九工序画面、四种皮料、小旦线稿、灰化状态、剪影及十一部件均由上述生成图确定性裁切、调色和组合，构建脚本为 `scripts/generate-stage-art.js`。曾尝试单独生成九宫格工序图，但三次网络生成未成功，因此没有把失败输出或临时图形写入项目。
 
-轻量 XR 几何由 `scripts/generate-experience-glb.js` 自制生成，项目路径为 `miniprogram/experiencexr/xr-assets/experience-kit.glb`；包含木质几何、连接件和操纵杆基础网格，纹理复用上述正式 WebP。
+持续工作台中的 XR 采用 XR-Frame 原生平面、立方体、灯光和透明材质，位于 `miniprogram/experiencegame/components/xr-stage/`；不再装载旧 GLB 或复制一套场景背景，加载失败时保留同页 2D 操作。

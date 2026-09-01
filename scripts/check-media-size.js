@@ -10,12 +10,12 @@ function total(root, excluded = new Set()) {
 }
 
 const limit = Math.floor(1.8 * 1024 * 1024);
-const roots = ["miniprogram/experience2d", "miniprogram/experiencexr"];
+const roots = ["miniprogram/experience2d", "miniprogram/experiencegame"];
 const excluded = new Set(roots.map((root) => path.resolve(root)));
 const packages = {
   main: total("miniprogram", excluded),
   experience2d: total(roots[0]),
-  experiencexr: total(roots[1]),
+  experiencegame: total(roots[1]),
 };
 for (const [name, bytes] of Object.entries(packages)) {
   if (bytes > limit) throw new Error(`${name} package ${bytes} exceeds ${limit}`);
