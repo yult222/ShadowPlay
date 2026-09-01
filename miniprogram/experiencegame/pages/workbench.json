@@ -1,0 +1,12 @@
+{
+  "navigationStyle": "custom",
+  "disableScroll": true,
+  "usingComponents": {
+    "experience-shell": "/components/experience-shell/index",
+    "experience-rail": "/components/experience-rail/index",
+    "common-popup": "/components/common-popup/index",
+    "craft-canvas": "/experiencegame/components/craft-canvas/index",
+    "free-drag": "/experiencegame/components/free-drag/index",
+    "xr-stage": "/experiencegame/components/xr-stage/index"
+  }
+}

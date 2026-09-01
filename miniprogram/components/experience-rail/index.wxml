@@ -1,0 +1,11 @@
+<view class="process-rail {{expanded ? 'expanded' : 'collapsed'}}">
+  <view class="rail-toggle" bindtap="toggle">{{expanded ? '‹' : '›'}}</view>
+  <view class="rail-line"></view>
+  <view class="rail-steps">
+    <view wx:for="{{stages}}" wx:key="id" class="rail-step {{item.status}}" data-index="{{index}}" bindtap="select">
+      <view class="rail-mark"><view></view></view>
+      <text wx:if="{{expanded}}" class="rail-title">{{item.title}}</text>
+    </view>
+  </view>
+  <view class="rail-progress">{{progress}}%</view>
+</view>

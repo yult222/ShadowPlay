@@ -1,0 +1,23 @@
+<experience-shell fullBleed="{{true}}" title="{{activeTitle}}" showBack="{{true}}" showSettings="{{true}}" backLabel="{{copy.back}}" settingsLabel="{{copy.settings}}" bind:back="back" bind:settings="openSettings">
+  <view class="workbench-page" style="--board-top:{{boardTop}}px">
+    <image class="workbench-bg" src="/images/experience-v3/workbench-portrait.webp" mode="aspectFill" />
+    <view class="workbench-shade"></view>
+    <view class="board {{transitioning ? 'transitioning' : ''}}" style="top:{{boardTop}}px;width:{{boardWidth}}px;height:{{boardHeight}}px">
+      <experience-rail stages="{{stages}}" expanded="{{railExpanded}}" progress="{{progress}}" bind:toggle="toggleRail" bind:stage="selectRail" />
+      <view class="stage-layer">
+        <xr-stage wx:if="{{xrEnabled}}" stageId="{{activeStageId}}" phase="{{activePhase}}" completed="{{silhouette}}" bind:fallback="xrFallback" bind:action="xrAction" />
+        <free-drag wx:elif="{{activeStageId === 'leather' || activeStageId === 'parts' || activeStageId === 'joint' || activeStageId === 'rods' || activeStageId === 'light'}}" id="drag-stage" items="{{dragItems}}" targets="{{dragTargets}}" width="{{boardWidth}}" height="{{boardHeight}}" bind:drop="onDrop">
+          <image wx:if="{{activeStageId === 'joint' || activeStageId === 'rods'}}" class="assembled-ghost" src="/images/experience-v3/xiaodan-anchor.webp" mode="aspectFit" />
+          <view wx:if="{{activeStageId === 'light'}}" class="light-screen {{silhouette ? 'complete' : ''}}"></view>
+          <image wx:if="{{activeStageId === 'light' && lightPhase !== 'puppet'}}" class="light-puppet {{silhouette ? 'silhouette' : ''}}" src="/images/experience-v3/xiaodan-anchor.webp" mode="aspectFit" />
+        </free-drag>
+        <craft-canvas wx:if="{{activeStageId === 'draft' || activeStageId === 'trace' || activeStageId === 'carve' || activeStageId === 'color'}}" id="craft-canvas" stageId="{{activeStageId}}" baseImage="/images/experience-v3/xiaodan-anchor.webp" baseClass="{{canvasBaseClass}}" guidePaths="{{canvasGuides}}" tone="{{canvasTone}}" bind:ready="onCanvasReady" bind:strokestart="strokeStart" bind:strokemove="strokeMove" bind:strokeend="strokeEnd">
+          <view wx:if="{{activeStageId === 'color'}}" class="palette">
+            <view wx:for="{{palette}}" wx:key="id" class="palette-color {{selectedColor === item.id ? 'selected' : ''}} {{recommendedColor === item.id ? 'recommended' : ''}}" data-id="{{item.id}}" style="background:{{item.value}}" bindtap="chooseColor"><text>{{item.label}}</text></view>
+          </view>
+        </craft-canvas>
+      </view>
+    </view>
+  </view>
+</experience-shell>
+<common-popup visible="{{settingsVisible}}" title="{{copy.settings}}" sfxLabel="{{copy.soundEffects}}" bgmLabel="{{copy.backgroundMusic}}" sfxEnabled="{{sfxEnabled}}" bgmEnabled="{{bgmEnabled}}" bind:close="closeSettings" bind:sfx="changeSfx" bind:bgm="changeBgm" />

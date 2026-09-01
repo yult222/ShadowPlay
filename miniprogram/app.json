@@ -12,12 +12,12 @@
     {
       "root": "experience2d",
       "name": "experience2d",
-      "pages": ["pages/role", "pages/stage", "pages/gallery", "pages/help", "pages/result"]
+      "pages": ["pages/role", "pages/gallery", "pages/help", "pages/result"]
     },
     {
-      "root": "experiencexr",
-      "name": "experiencexr",
-      "pages": ["pages/workshop", "pages/stage"]
+      "root": "experiencegame",
+      "name": "experiencegame",
+      "pages": ["pages/workbench"]
     }
   ],
   "window": {

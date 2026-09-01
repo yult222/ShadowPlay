@@ -1,5 +1,0 @@
-<view class="canvas-stage {{tone}}">
-  <image class="canvas-base {{baseClass}}" src="{{baseImage}}" mode="aspectFit" />
-  <canvas id="surface" type="2d" class="canvas-surface" disable-scroll="{{true}}" catchtouchstart="onStart" catchtouchmove="onMove" catchtouchend="onEnd" catchtouchcancel="onEnd"></canvas>
-  <slot></slot>
-</view>

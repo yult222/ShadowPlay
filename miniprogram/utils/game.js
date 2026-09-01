@@ -7,6 +7,7 @@ function initialSession() {
     completedStageIds: [],
     attemptsByStage: {},
     progressByStage: {},
+    stageStateById: {},
     currentStageId: "",
   };
 }
@@ -50,11 +51,14 @@ function failStage(stageId) {
   return count;
 }
 
-function recordStageProgress(stageId, value) {
+function recordStageProgress(stageId, value, patch) {
   const active = getActiveStage();
   if (!active || active.id !== stageId || session.currentStageId !== stageId) return false;
   const next = Math.max(0, Math.min(100, Math.round(Number(value) || 0)));
   session.progressByStage[stageId] = Math.max(Number(session.progressByStage[stageId] || 0), next);
+  if (patch && typeof patch === "object") {
+    session.stageStateById[stageId] = Object.assign({}, session.stageStateById[stageId] || {}, copy(patch));
+  }
   return session.progressByStage[stageId];
 }
 
@@ -67,12 +71,17 @@ function completeStage(stageId) {
   session.progressByStage[stageId] = 100;
   session.activeStageIndex += 1;
   session.currentStageId = "";
-  return true;
+  const nextStage = getActiveStage();
+  return { completed: true, nextStageId: nextStage ? nextStage.id : "", finished: !nextStage };
 }
 
 function getSnapshot() {
   const snapshot = copy(session);
   snapshot.progress = Math.round((snapshot.completedStageIds.length / STAGES.length) * 100);
+  const activeProgress = snapshot.activeStageIndex < STAGES.length
+    ? Number(snapshot.progressByStage[STAGES[snapshot.activeStageIndex].id] || 0)
+    : 0;
+  snapshot.liveProgress = Math.round(((snapshot.completedStageIds.length + activeProgress / 100) / STAGES.length) * 100);
   snapshot.activeStage = STAGES[snapshot.activeStageIndex] || null;
   snapshot.finished = snapshot.activeStageIndex >= STAGES.length;
   return snapshot;

@@ -1,4 +1,4 @@
-<experience-shell title="{{copy.result}}">
+<experience-shell fullBleed="{{true}}" title="{{copy.result}}">
   <view class="result-stage">
     <image class="result-backdrop" src="/images/experience-v3/stages/09-light.webp" mode="aspectFill" />
     <view class="result-light"></view>

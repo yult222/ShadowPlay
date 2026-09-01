@@ -1,9 +1,9 @@
 <experience-shell title="{{copy.roleTitle}}" showBack="{{true}}" backLabel="{{copy.back}}" bind:back="back">
-  <button class="role-primary {{selected ? 'selected' : ''}}" bindtap="selectXiaodan">
+  <view class="role-primary {{selected ? 'selected' : ''}}" bindtap="selectXiaodan">
     <view class="role-paper"></view>
     <image src="/images/experience-v3/xiaodan-anchor.webp" mode="aspectFit" />
     <view class="role-name">{{copy.xiaodan}}</view>
-  </button>
+  </view>
   <view class="role-locked-row">
     <view class="role-locked">
       <image src="/images/experience-v3/wusheng-card.webp" mode="aspectFill" />
@@ -18,5 +18,5 @@
     <view class="role-detail-title">{{copy.roleIntro}}</view>
     <view>{{copy.name}}</view><view>{{copy.feature}}</view><view>{{copy.difficulty}}</view>
   </view>
-  <button class="primary-action" bindtap="choose">{{copy.selectRole}}</button>
+  <view class="role-action"><experience-button label="{{copy.selectRole}}" variant="primary" bind:tap="choose" /></view>
 </experience-shell>

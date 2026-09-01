@@ -11,5 +11,5 @@ Page({
   onUnload(){audio.leavePage(this.route);},
   back(){wx.navigateBack();},
   selectXiaodan(){this.setData({selected:true});audio.playFeedback();},
-  choose(){if(game.selectRole("xiaodan")){audio.playFeedback();wx.navigateTo({url:"/experiencexr/pages/workshop"});}},
+  choose(){if(game.selectRole("xiaodan")){audio.playFeedback();wx.navigateTo({url:"/experiencegame/pages/workbench"});}},
 });
