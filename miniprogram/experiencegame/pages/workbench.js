@@ -1,29 +1,31 @@
 const {
-  COPY, STAGES, MATERIALS, COLORS, DRAFT_GROUPS, CRAFT_TAP_TARGETS, CARVE_GROUPS,
+  COPY, STAGES, MATERIALS, COLORS, CRAFT_TAP_TARGETS, CRAFT_REVEAL_CLIPS,
   COLOR_MASKS, PARTS, JOINT_TARGETS, ROD_TARGETS,
 } = require("../../data/experience");
 const game = require("../../utils/game");
 const audio = require("../../services/experienceAudio");
-const {
-  densifyPath, pointInPolygon, pickTapTarget,
-} = require("../../utils/pathEngine");
+const { pointInPolygon, pickTapTarget } = require("../../utils/pathEngine");
 const { hideShareMenu } = require("../../utils/page");
 const { canUseXR } = require("../../utils/xr");
 
-const DRAFT_PATHS = DRAFT_GROUPS.map((group) => ({ ...group, paths: group.paths.map((path) => densifyPath(path, 0.018)) }));
-const TRACE_ASSIST_GROUPS = DRAFT_GROUPS.map((group) => ({ ...group, paths: group.paths.map((path) => densifyPath(path, 0.026)) }));
-const CARVE_PATHS = CARVE_GROUPS.map((group) => ({ ...group, paths: group.paths.map((path) => densifyPath(path, 0.016)) }));
-const PATHS_BY_STAGE = Object.freeze({ draft: DRAFT_PATHS, trace: TRACE_ASSIST_GROUPS, carve: CARVE_PATHS });
-
 function deepCopy(value) { return JSON.parse(JSON.stringify(value)); }
 function clamp(value, min, max) { return Math.max(min, Math.min(max, value)); }
+function polygonClip(polygon) { return `polygon(${polygon.map((point) => `${Math.round(point.x * 1000) / 10}% ${Math.round(point.y * 1000) / 10}%`).join(",")})`; }
+function craftRevealLayers(stageId, state) {
+  if (stageId === "color") {
+    const filled = new Set(state.filledMaskIds || []);
+    return COLOR_MASKS.filter((mask) => filled.has(mask.id)).map((mask) => ({ key: `color-${mask.id}`, clip: polygonClip(mask.polygon) }));
+  }
+  const clips = CRAFT_REVEAL_CLIPS[stageId]; if (!clips) return [];
+  return (state.selectedGroups || []).flatMap((id) => (clips[id] || []).map((clip, index) => ({ key: `${stageId}-${id}-${index}`, clip })));
+}
 
 Page({
   data: {
     copy: COPY, stages: [], activeStageId: "", activeTitle: "", progress: 0,
     railExpanded: false, settingsVisible: false, sfxEnabled: true, bgmEnabled: true,
     boardWidth: 320, boardHeight: 520, boardTop: 150, transitioning: false,
-    canvasGuides: [], canvasBaseClass: "", canvasTone: "", selectedColor: "red", palette: COLORS,
+    revealLayers: [], canvasBaseClass: "", canvasTone: "", selectedColor: "red", palette: COLORS,
     dragItems: [], dragTargets: [], dragVersion: 0, lightPhase: "puppet", silhouette: false,
     xrEnabled: false, activePhase: "",
   },
@@ -83,13 +85,10 @@ Page({
     const state = deepCopy((this.snapshot.stageStateById && this.snapshot.stageStateById[stageId]) || {});
     this.stageState = state;
     const config = {
-      canvasGuides: [], canvasBaseClass: stageId, canvasTone: "", dragItems: [], dragTargets: [],
+      revealLayers: craftRevealLayers(stageId, state), canvasBaseClass: stageId, canvasTone: "", dragItems: [], dragTargets: [],
       silhouette: Boolean(state.silhouette), activePhase: state.phase || (stageId === "light" ? "puppet" : "install"),
       xrEnabled: canUseXR() && ["rods", "light"].includes(stageId),
     };
-    if (stageId === "draft") config.canvasGuides = DRAFT_PATHS.flatMap((group) => group.paths);
-    if (stageId === "trace") config.canvasGuides = TRACE_ASSIST_GROUPS.flatMap((group) => group.paths);
-    if (stageId === "carve") config.canvasGuides = CARVE_PATHS.flatMap((group) => group.paths);
     if (["leather", "parts", "joint", "rods", "light"].includes(stageId)) Object.assign(config, this.dragScene(stageId, state));
     if (stageId === "color") config.selectedColor = state.selectedColor || "red";
     this.setData(config);
@@ -262,41 +261,25 @@ Page({
     if (detail.kind === "light-test") { this.stageState.silhouette = true; this.setData({ silhouette: true }); this.checkpoint(100, { phase: "done", silhouette: true }); setTimeout(() => this.complete(), 520); }
   },
   chooseColor(event) { const selectedColor = event.currentTarget.dataset.id; this.stageState.selectedColor = selectedColor; this.setData({ selectedColor }); this.checkpoint(Number(this.snapshot.progressByStage.color || 0), { selectedColor }); },
-  onCanvasReady() {
-    const canvas = this.selectComponent("#craft-canvas"); if (!canvas) return;
-    const id = this.data.activeStageId; const state = this.stageState;
-    if (PATHS_BY_STAGE[id]) {
-      const selected = new Set(state.selectedGroups || []);
-      PATHS_BY_STAGE[id].filter((group) => selected.has(group.id)).forEach((group) => canvas.drawPaths(group.paths, id === "trace" ? "#351d12" : id === "carve" ? "#4f2d19" : "#5a3c24", id === "trace" ? 8 : id === "carve" ? 4 : 5));
-    }
-    if (id === "color") {
-      const filled = new Set(state.filledMaskIds || []);
-      COLOR_MASKS.filter((mask) => filled.has(mask.id)).forEach((mask) => {
-        const color = COLORS.find((candidate) => candidate.id === mask.colorId); if (color) canvas.fillPolygon(mask.polygon, color.value);
-      });
-    }
-  },
   selectCanvas(event) {
     const point = event.detail;
     const id = this.data.activeStageId; if (!["draft", "trace", "carve", "color"].includes(id)) return;
-    const canvas = this.selectComponent("#craft-canvas"); if (!canvas) return;
-    if (id === "color") return this.selectColorRegion(point, canvas);
+    if (id === "color") return this.selectColorRegion(point);
     const selected = this.stageState.selectedGroups || [];
     const targetId = pickTapTarget(point, CRAFT_TAP_TARGETS[id], selected, id === "carve" ? 0.20 : 0.21);
     if (!targetId) return;
     const next = Array.from(new Set([...selected, targetId]));
-    const group = PATHS_BY_STAGE[id].find((candidate) => candidate.id === targetId);
-    if (group) canvas.drawPaths(group.paths, id === "trace" ? "#351d12" : id === "carve" ? "#4f2d19" : "#5a3c24", id === "trace" ? 8 : id === "carve" ? 4 : 5);
     this.stageState.selectedGroups = next;
+    this.setData({ revealLayers: craftRevealLayers(id, this.stageState) });
     this.checkpoint(Math.round((next.length / CRAFT_TAP_TARGETS[id].length) * 100), { selectedGroups: next });
     if (next.length === CRAFT_TAP_TARGETS[id].length) setTimeout(() => this.complete(), 260);
   },
-  selectColorRegion(point, canvas) {
+  selectColorRegion(point) {
     const mask = COLOR_MASKS.find((candidate) => pointInPolygon(point, candidate.polygon)); if (!mask) return;
     const selected = COLORS.find((color) => color.id === this.data.selectedColor); if (!selected) return;
     if (mask.colorId !== selected.id) { this.fail(); this.setData({ recommendedColor: mask.colorId }); setTimeout(() => this.setData({ recommendedColor: "" }), 420); return; }
     const filledMaskIds = Array.from(new Set([...(this.stageState.filledMaskIds || []), mask.id]));
-    canvas.fillPolygon(mask.polygon, selected.value); this.stageState.filledMaskIds = filledMaskIds;
+    this.stageState.filledMaskIds = filledMaskIds; this.setData({ revealLayers: craftRevealLayers("color", this.stageState) });
     this.checkpoint(Math.round((filledMaskIds.length / COLOR_MASKS.length) * 100), { filledMaskIds, selectedColor: selected.id });
     if (filledMaskIds.length === COLOR_MASKS.length) setTimeout(() => this.complete(), 260);
   },

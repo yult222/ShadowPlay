@@ -31,52 +31,45 @@ const COLORS = Object.freeze([
   { id: "black", label: "黑", value: "#30251C" },
 ]);
 
-const DRAFT_GROUPS = Object.freeze([
-  { id: "head", paths: [[{x:.42,y:.20},{x:.39,y:.13},{x:.44,y:.08},{x:.52,y:.07},{x:.60,y:.12},{x:.58,y:.21},{x:.50,y:.25},{x:.42,y:.20}]] },
-  { id: "torso", paths: [[{x:.44,y:.25},{x:.40,y:.43},{x:.50,y:.54},{x:.60,y:.43},{x:.56,y:.25}]] },
-  { id: "sleeves", paths: [[{x:.43,y:.29},{x:.31,y:.34},{x:.20,y:.49},{x:.10,y:.57}],[{x:.57,y:.29},{x:.69,y:.34},{x:.80,y:.49},{x:.90,y:.57}]] },
-  { id: "lower", paths: [[{x:.45,y:.51},{x:.36,y:.68},{x:.40,y:.90}],[{x:.55,y:.51},{x:.64,y:.68},{x:.60,y:.90}],[{x:.40,y:.58},{x:.50,y:.70},{x:.60,y:.58}]] },
-]);
-
 const CRAFT_TAP_TARGETS = Object.freeze({
   draft: Object.freeze([
     { id: "head", points: [{ x: 0.50, y: 0.15 }] },
-    { id: "torso", points: [{ x: 0.50, y: 0.38 }] },
-    { id: "sleeves", points: [{ x: 0.28, y: 0.43 }, { x: 0.72, y: 0.43 }] },
-    { id: "lower", points: [{ x: 0.50, y: 0.72 }] },
+    { id: "torso", points: [{ x: 0.50, y: 0.34 }] },
+    { id: "sleeves", points: [{ x: 0.22, y: 0.43 }, { x: 0.78, y: 0.43 }] },
+    { id: "lower", points: [{ x: 0.50, y: 0.70 }] },
   ]),
   trace: Object.freeze([
     { id: "head", points: [{ x: 0.50, y: 0.15 }] },
-    { id: "torso", points: [{ x: 0.50, y: 0.38 }] },
-    { id: "sleeves", points: [{ x: 0.28, y: 0.43 }, { x: 0.72, y: 0.43 }] },
-    { id: "lower", points: [{ x: 0.50, y: 0.72 }] },
+    { id: "torso", points: [{ x: 0.50, y: 0.34 }] },
+    { id: "sleeves", points: [{ x: 0.22, y: 0.43 }, { x: 0.78, y: 0.43 }] },
+    { id: "lower", points: [{ x: 0.50, y: 0.70 }] },
   ]),
   carve: Object.freeze([
     { id: "outer", points: [{ x: 0.50, y: 0.12 }] },
-    { id: "pattern", points: [{ x: 0.50, y: 0.50 }] },
-    { id: "openwork", points: [{ x: 0.29, y: 0.48 }, { x: 0.71, y: 0.48 }] },
+    { id: "pattern", points: [{ x: 0.50, y: 0.48 }] },
+    { id: "openwork", points: [{ x: 0.22, y: 0.46 }, { x: 0.78, y: 0.46 }] },
   ]),
 });
 
-const TRACE_POINTS = Object.freeze([
-  [0.489,0.092],[0.421,0.116],[0.378,0.139],[0.349,0.162],[0.356,0.185],[0.370,0.208],[0.422,0.232],[0.416,0.255],[0.438,0.278],[0.355,0.302],[0.312,0.325],[0.252,0.348],[0.223,0.371],[0.121,0.395],[0.077,0.418],[0.039,0.441],[0.031,0.464],[0.087,0.487],[0.086,0.511],[0.112,0.534],[0.133,0.558],[0.327,0.581],[0.305,0.604],[0.278,0.627],[0.253,0.650],[0.246,0.674],[0.185,0.697],[0.155,0.721],[0.190,0.744],[0.272,0.767],[0.437,0.790],[0.441,0.813],[0.428,0.837],[0.385,0.860],[0.386,0.883],[0.567,0.907],[0.576,0.907],[0.596,0.883],[0.601,0.860],[0.568,0.837],[0.565,0.813],[0.778,0.790],[0.767,0.767],[0.851,0.744],[0.889,0.721],[0.866,0.697],[0.832,0.674],[0.793,0.650],[0.791,0.627],[0.774,0.604],[0.728,0.581],[0.868,0.558],[0.883,0.534],[0.904,0.511],[0.892,0.487],[0.977,0.464],[0.943,0.441],[0.907,0.418],[0.829,0.395],[0.750,0.371],[0.737,0.348],[0.687,0.325],[0.649,0.302],[0.554,0.278],[0.574,0.255],[0.665,0.232],[0.664,0.208],[0.665,0.185],[0.658,0.162],[0.669,0.139],[0.634,0.116],[0.494,0.092],[0.489,0.092],
-].map(([x,y]) => Object.freeze({x,y})));
-
-const CARVE_PATHS = Object.freeze([
-  [{ x: 0.50, y: 0.09 }, { x: 0.33, y: 0.30 }], [{ x: 0.33, y: 0.30 }, { x: 0.21, y: 0.48 }],
-  [{ x: 0.21, y: 0.48 }, { x: 0.40, y: 0.86 }], [{ x: 0.40, y: 0.86 }, { x: 0.60, y: 0.86 }],
-  [{ x: 0.60, y: 0.86 }, { x: 0.79, y: 0.48 }], [{ x: 0.79, y: 0.48 }, { x: 0.50, y: 0.09 }],
-  [{ x: 0.38, y: 0.37 }, { x: 0.50, y: 0.50 }, { x: 0.62, y: 0.37 }],
-  [{ x: 0.36, y: 0.57 }, { x: 0.50, y: 0.68 }, { x: 0.64, y: 0.57 }],
-  [{ x: 0.29, y: 0.43 }, { x: 0.34, y: 0.48 }, { x: 0.29, y: 0.53 }],
-  [{ x: 0.71, y: 0.43 }, { x: 0.66, y: 0.48 }, { x: 0.71, y: 0.53 }],
-]);
-
-const CARVE_GROUPS = Object.freeze([
-  { id: "outer", paths: CARVE_PATHS.slice(0, 6) },
-  { id: "pattern", paths: CARVE_PATHS.slice(6, 8) },
-  { id: "openwork", paths: CARVE_PATHS.slice(8, 10) },
-]);
+const CRAFT_REVEAL_CLIPS = Object.freeze({
+  draft: Object.freeze({
+    head: ["polygon(27% 0%,73% 0%,69% 28%,31% 28%)"],
+    torso: ["polygon(35% 23%,65% 23%,65% 47%,35% 47%)"],
+    sleeves: ["polygon(0% 25%,43% 24%,43% 48%,5% 61%)", "polygon(57% 24%,100% 25%,95% 61%,57% 48%)"],
+    lower: ["polygon(13% 42%,87% 42%,91% 100%,9% 100%)"],
+  }),
+  trace: Object.freeze({
+    head: ["polygon(27% 0%,73% 0%,69% 28%,31% 28%)"],
+    torso: ["polygon(35% 23%,65% 23%,65% 47%,35% 47%)"],
+    sleeves: ["polygon(0% 25%,43% 24%,43% 48%,5% 61%)", "polygon(57% 24%,100% 25%,95% 61%,57% 48%)"],
+    lower: ["polygon(13% 42%,87% 42%,91% 100%,9% 100%)"],
+  }),
+  carve: Object.freeze({
+    outer: ["polygon(27% 0%,73% 0%,69% 28%,31% 28%)", "polygon(8% 56%,42% 44%,48% 100%,6% 100%)", "polygon(58% 44%,92% 56%,94% 100%,52% 100%)"],
+    pattern: ["polygon(34% 23%,66% 23%,68% 82%,32% 82%)"],
+    openwork: ["polygon(0% 25%,43% 24%,43% 59%,5% 63%)", "polygon(57% 24%,100% 25%,95% 63%,57% 59%)"],
+  }),
+});
 
 const COLOR_MASKS = Object.freeze([
   ["head","yellow",[[.42,.08],[.58,.08],[.61,.18],[.56,.26],[.44,.26],[.39,.18]]],
@@ -107,4 +100,4 @@ const JOINT_TARGETS = Object.freeze([
 const ROD_TARGETS = Object.freeze([{ x: 0.23, y: 0.45 }, { x: 0.50, y: 0.27 }, { x: 0.77, y: 0.45 }]);
 const COPY_ALLOWLIST = Object.freeze([...Object.values(COPY), ...STAGES.map((item) => item.title), ...MATERIALS.map((item) => item.label), ...COLORS.map((item) => item.label)]);
 
-module.exports = { COPY, STAGES, MATERIALS, COLORS, DRAFT_GROUPS, CRAFT_TAP_TARGETS, TRACE_POINTS, CARVE_PATHS, CARVE_GROUPS, COLOR_MASKS, PARTS, JOINT_TARGETS, ROD_TARGETS, COPY_ALLOWLIST };
+module.exports = { COPY, STAGES, MATERIALS, COLORS, CRAFT_TAP_TARGETS, CRAFT_REVEAL_CLIPS, COLOR_MASKS, PARTS, JOINT_TARGETS, ROD_TARGETS, COPY_ALLOWLIST };

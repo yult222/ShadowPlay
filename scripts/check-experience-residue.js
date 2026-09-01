@@ -48,7 +48,8 @@ for (const forbidden of ["paintTrace", "paintDraft", "paintCarve", "paintPoints"
   if (workbenchLogic.includes(forbidden)) throw new Error(`freehand craft logic remains: ${forbidden}`);
 }
 const craftSurface = fs.readFileSync("miniprogram/experiencegame/components/craft-canvas/index.wxml", "utf8");
-if (craftSurface.includes("catchtouchmove") || craftSurface.includes("strokemove")) throw new Error("continuous drawing listener remains");
+if (craftSurface.includes("catchtouchmove") || craftSurface.includes("strokemove") || craftSurface.includes("<canvas")) throw new Error("independent drawing surface remains");
+if (workbenchLogic.includes("drawPaths") || workbenchLogic.includes("canvasGuides")) throw new Error("independent guide line remains");
 const rail = fs.readFileSync("miniprogram/components/experience-rail/index.wxml", "utf8");
 if (!rail.includes('wx:for="{{stages}}"')) throw new Error("nine-stage rail is not data-driven");
 console.log("LEGACY_RESIDUE_OK");

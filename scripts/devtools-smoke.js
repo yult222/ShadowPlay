@@ -55,11 +55,11 @@ function maskPoint(mask) { const cells = buildMaskCells(mask.polygon, 34); retur
 
     for (const target of CRAFT_TAP_TARGETS.draft) await selectCanvas(miniProgram, target.points[0]);
     await wait(500); assert.equal(await pageData(miniProgram, "activeStageId"), "trace");
-    await miniProgram.screenshot({ path: path.join(OUTPUT, "workbench-trace-guide.png") });
+    await miniProgram.screenshot({ path: path.join(OUTPUT, "workbench-trace-source-before.png") });
     await selectCanvas(miniProgram, { x: 0.02, y: 0.02 });
     await selectCanvas(miniProgram, CRAFT_TAP_TARGETS.trace[0].points[0]);
     await wait(220);
-    await miniProgram.screenshot({ path: path.join(OUTPUT, "workbench-trace-assisted.png") });
+    await miniProgram.screenshot({ path: path.join(OUTPUT, "workbench-trace-source-reveal.png") });
     for (const target of CRAFT_TAP_TARGETS.trace.slice(1)) await selectCanvas(miniProgram, target.points[0]);
     await wait(500); assert.equal(await pageData(miniProgram, "activeStageId"), "carve");
 

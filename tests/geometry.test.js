@@ -24,6 +24,15 @@ test("normalized coordinates clamp across phone-sized canvases", () => {
   assert.deepEqual(geometry.fromNormalizedPoint({ x: 0.25, y: 0.75 }, 430, 932), { x: 107.5, y: 699 });
 });
 
+test("aspect-fit coordinates map taps into the puppet image instead of board padding", () => {
+  const center = geometry.toAspectFitNormalizedPoint({ x: 0.5, y: 0.5 }, 390, 700, 768, 1152);
+  assert.ok(Math.abs(center.x - 0.5) < 1e-9); assert.ok(Math.abs(center.y - 0.5) < 1e-9);
+  assert.equal(geometry.toAspectFitNormalizedPoint({ x: 0.5, y: 0.02 }, 390, 700, 768, 1152), null);
+  const top = (700 - 390 * 1.5) / 2;
+  const head = geometry.toAspectFitNormalizedPoint({ x: 0.5, y: (top + 0.15 * 390 * 1.5) / 700 }, 390, 700, 768, 1152);
+  assert.ok(Math.abs(head.y - 0.15) < 1e-9);
+});
+
 test("responsive boards fit all required phone viewports", () => {
   for (const [width, height] of [[360, 800], [375, 812], [390, 844], [430, 932]]) {
     const board = geometry.responsiveBoardSize(width, height);

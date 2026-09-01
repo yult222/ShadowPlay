@@ -1,58 +1,3 @@
-const { pointToSegmentDistance } = require("./geometry");
-
-function densifyPath(points, gap = 0.025) {
-  const source = Array.isArray(points) ? points : [];
-  if (source.length < 2) return source.slice();
-  const output = [{ ...source[0] }];
-  for (let index = 0; index < source.length - 1; index += 1) {
-    const start = source[index];
-    const end = source[index + 1];
-    const distance = Math.hypot(end.x - start.x, end.y - start.y);
-    const steps = Math.max(1, Math.ceil(distance / gap));
-    for (let step = 1; step <= steps; step += 1) {
-      const ratio = step / steps;
-      output.push({ x: start.x + (end.x - start.x) * ratio, y: start.y + (end.y - start.y) * ratio });
-    }
-  }
-  return output;
-}
-
-function normalizeCoverage(paths, coverage) {
-  return paths.map((_, index) => Array.from(new Set((coverage && coverage[index]) || [])).sort((a, b) => a - b));
-}
-
-function markPathCoverage(point, paths, coverage, tolerance = 0.05, neighborSpan = 1) {
-  const next = normalizeCoverage(paths, coverage);
-  let hit = false;
-  let nearest = Infinity;
-  for (let pathIndex = 0; pathIndex < paths.length; pathIndex += 1) {
-    const path = paths[pathIndex];
-    const marked = new Set(next[pathIndex]);
-    for (let segment = 0; segment < path.length - 1; segment += 1) {
-      const offset = pointToSegmentDistance(point, path[segment], path[segment + 1]);
-      nearest = Math.min(nearest, offset);
-      if (offset > tolerance) continue;
-      hit = true;
-      for (let span = -neighborSpan; span <= neighborSpan; span += 1) {
-        const candidate = segment + span;
-        if (candidate >= 0 && candidate < path.length - 1) marked.add(candidate);
-      }
-    }
-    next[pathIndex] = Array.from(marked).sort((a, b) => a - b);
-  }
-  return { hit, nearest, coverage: next, progress: pathCoverageProgress(paths, next) };
-}
-
-function pathCoverageProgress(paths, coverage) {
-  let total = 0;
-  let marked = 0;
-  paths.forEach((path, index) => {
-    total += Math.max(0, path.length - 1);
-    marked += new Set((coverage && coverage[index]) || []).size;
-  });
-  return total ? marked / total : 0;
-}
-
 function pointInPolygon(point, polygon) {
   if (!point || !Array.isArray(polygon) || polygon.length < 3) return false;
   let inside = false;
@@ -100,10 +45,6 @@ function pickTapTarget(point, targets, completedIds = [], radius = 0.19) {
 }
 
 module.exports = {
-  densifyPath,
-  normalizeCoverage,
-  markPathCoverage,
-  pathCoverageProgress,
   pointInPolygon,
   buildMaskCells,
   paintMask,

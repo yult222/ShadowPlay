@@ -28,6 +28,19 @@ function fromNormalizedPoint(point, width, height) {
   return { x: point.x * width, y: point.y * height };
 }
 
+function toAspectFitNormalizedPoint(point, containerWidth, containerHeight, contentWidth, contentHeight) {
+  if (!point || !containerWidth || !containerHeight || !contentWidth || !contentHeight) return null;
+  const scale = Math.min(containerWidth / contentWidth, containerHeight / contentHeight);
+  const width = contentWidth * scale;
+  const height = contentHeight * scale;
+  const left = (containerWidth - width) / 2;
+  const top = (containerHeight - height) / 2;
+  const x = (point.x * containerWidth - left) / width;
+  const y = (point.y * containerHeight - top) / height;
+  if (x < 0 || x > 1 || y < 0 || y > 1) return null;
+  return { x, y };
+}
+
 function responsiveBoardSize(windowWidth, windowHeight) {
   const width = Math.max(292, Math.min(410, Number(windowWidth || 375) - 28));
   const heightLimit = Math.max(356, Number(windowHeight || 812) - 286);
@@ -98,6 +111,7 @@ module.exports = {
   toLocalPoint,
   toNormalizedPoint,
   fromNormalizedPoint,
+  toAspectFitNormalizedPoint,
   responsiveBoardSize,
   near,
   pointToSegmentDistance,

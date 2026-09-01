@@ -1,5 +1,8 @@
 <view class="craft-canvas {{tone}}">
   <image class="craft-base {{baseClass}}" src="{{baseImage}}" mode="aspectFit" />
-  <canvas id="craft-surface" type="2d" class="craft-surface" disable-scroll="{{true}}" catchtouchstart="select"></canvas>
+  <view class="craft-reveal-frame" style="{{imageFrameStyle}}">
+    <image wx:for="{{revealLayers}}" wx:key="key" class="craft-reveal {{baseClass}}" src="{{baseImage}}" mode="scaleToFill" style="-webkit-clip-path:{{item.clip}};clip-path:{{item.clip}}" />
+  </view>
+  <view id="craft-surface" class="craft-surface" catchtouchstart="select"></view>
   <slot></slot>
 </view>

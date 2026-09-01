@@ -1,25 +1,7 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const { densifyPath, markPathCoverage, pathCoverageProgress, pointInPolygon, buildMaskCells, paintMask, pickTapTarget } = require("../miniprogram/utils/pathEngine");
-const { TRACE_POINTS, CRAFT_TAP_TARGETS, CARVE_GROUPS, COLOR_MASKS } = require("../miniprogram/data/experience");
-
-test("continuous paths can start anywhere and keep earlier coverage", () => {
-  const path = densifyPath(TRACE_POINTS, 0.02); let coverage = [];
-  const middle = path[Math.floor(path.length / 2)]; let result = markPathCoverage(middle, [path], coverage, 0.04, 2);
-  assert.equal(result.hit, true); coverage = result.coverage; const first = result.progress;
-  result = markPathCoverage(path[3], [path], coverage, 0.04, 2);
-  assert.ok(result.progress > first);
-  result = markPathCoverage({ x: 0.02, y: 0.02 }, [path], result.coverage, 0.02, 1);
-  assert.equal(result.hit, false); assert.ok(pathCoverageProgress([path], result.coverage) >= first);
-});
-
-test("every carving group reaches its threshold from independent strokes", () => {
-  for (const group of CARVE_GROUPS) {
-    const paths = group.paths.map((path) => densifyPath(path, 0.02)); let coverage = [];
-    paths.forEach((path) => path.forEach((point) => { coverage = markPathCoverage(point, paths, coverage, 0.035, 1).coverage; }));
-    assert.ok(pathCoverageProgress(paths, coverage) >= 0.85);
-  }
-});
+const { pointInPolygon, buildMaskCells, paintMask, pickTapTarget } = require("../miniprogram/utils/pathEngine");
+const { CRAFT_TAP_TARGETS, CRAFT_REVEAL_CLIPS, COLOR_MASKS } = require("../miniprogram/data/experience");
 
 test("craft stages select whole groups with taps instead of freehand strokes", () => {
   for (const stageId of ["draft", "trace", "carve"]) {
@@ -30,6 +12,19 @@ test("craft stages select whole groups with taps instead of freehand strokes", (
     }
     assert.equal(selected.length, targets.length);
     assert.equal(pickTapTarget(targets[0].points[0], targets, selected, 0.2), null);
+    for (const target of targets) assert.ok(Array.isArray(CRAFT_REVEAL_CLIPS[stageId][target.id]) && CRAFT_REVEAL_CLIPS[stageId][target.id].length > 0);
+  }
+});
+
+test("source reveal clips stay inside the original puppet image", () => {
+  for (const stage of Object.values(CRAFT_REVEAL_CLIPS)) {
+    for (const clips of Object.values(stage)) {
+      for (const clip of clips) {
+        assert.match(clip, /^polygon\(.+\)$/);
+        const values = Array.from(clip.matchAll(/([0-9]+)%/g), (match) => Number(match[1]));
+        assert.ok(values.length >= 6); assert.ok(values.every((value) => value >= 0 && value <= 100));
+      }
+    }
   }
 });
 
