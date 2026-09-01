@@ -1,6 +1,10 @@
+const { jointMotionValid } = require("../../../utils/geometry");
+
 const STARTS = ["-2.25 1.05 0.12", "2.25 1.05 0.12", "-2.25 0.55 0.12", "2.25 0.55 0.12", "-2.25 0.05 0.12", "2.25 0.05 0.12", "-2.25 -0.45 0.12", "2.25 -0.45 0.12", "-2.25 -0.95 0.12", "2.25 -0.95 0.12", "0 -1.20 0.12"];
 const TARGETS = [[0,1.08],[0,0.52],[-0.63,0.52],[-1.14,0.02],[0.63,0.52],[1.14,0.02],[-0.30,-0.32],[-0.32,-0.92],[0.30,-0.32],[0.32,-0.92],[0,-0.18]];
 const ASSETS = ["01-head.webp","02-torso.webp","03-left-upper.webp","04-left-lower.webp","05-right-upper.webp","06-right-lower.webp","07-left-thigh.webp","08-left-leg.webp","09-right-thigh.webp","10-right-leg.webp","11-skirt.webp"];
+const JOINT_DIRECTIONS = [0, 0, -1, -1, 1, 1, -1, -1, 1];
+const BODY_OBSTACLE = { x: -0.42, y: -0.18, width: 0.84, height: 0.80 };
 
 Component({
   properties: { stageId: String, phase: String, completed: Boolean, activeIndex: { type: Number, value: 0 } },
@@ -45,11 +49,17 @@ Component({
       if (!point || !value || !value.target) return;
       const transform = value.target._components.transform;
       if (this.properties.phase === "test") {
+        if (index >= 9) return;
         const target = TARGETS[index];
         const offset = Math.hypot(point.x - target[0], point.y - target[1]);
         if (offset <= 0.48) {
           transform.position.x = point.x; transform.position.y = point.y;
-          if (offset > 0.16) this.triggerEvent("action", { kind: "joint-test", index });
+          const valid = jointMotionValid(
+            { x: target[0], y: target[1] },
+            point,
+            { minRadius: 0.16, maxRadius: 0.48, direction: JOINT_DIRECTIONS[index], obstacles: JOINT_DIRECTIONS[index] ? [BODY_OBSTACLE] : [] },
+          );
+          if (valid) this.triggerEvent("action", { kind: "joint-test", index });
         } else { transform.position.x = target[0]; transform.position.y = target[1]; }
         return;
       }

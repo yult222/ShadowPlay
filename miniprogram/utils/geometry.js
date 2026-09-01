@@ -72,6 +72,19 @@ function rectsIntersect(a, b, padding = 0) {
   return !(a.x + a.width + padding < b.x || b.x + b.width + padding < a.x || a.y + a.height + padding < b.y || b.y + b.height + padding < a.y);
 }
 
+function jointMotionValid(origin, point, rules = {}) {
+  if (!origin || !point) return false;
+  const radius = distance(origin, point);
+  const minRadius = Number(rules.minRadius ?? 0.12);
+  const maxRadius = Number(rules.maxRadius ?? 0.5);
+  if (radius < minRadius || radius > maxRadius) return false;
+  const direction = Math.sign(Number(rules.direction || 0));
+  if (direction && (point.x - origin.x) * direction < Number(rules.directionMargin ?? 0.03)) return false;
+  const probeSize = Number(rules.probeSize ?? 0.08);
+  const probe = { x: point.x - probeSize / 2, y: point.y - probeSize / 2, width: probeSize, height: probeSize };
+  return !(rules.obstacles || []).some((obstacle) => rectsIntersect(probe, obstacle));
+}
+
 function worldPointFromRay(camera, direction, planeY = 0) {
   if (!camera || !direction || !Number.isFinite(direction[1]) || Math.abs(direction[1]) < 1e-6) return null;
   const k = (planeY - camera.y) / direction[1];
@@ -91,5 +104,6 @@ module.exports = {
   canSnap,
   isPointInEllipse,
   rectsIntersect,
+  jointMotionValid,
   worldPointFromRay,
 };
