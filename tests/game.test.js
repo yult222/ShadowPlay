@@ -31,10 +31,30 @@ test("game completes all nine stages without skipping", () => {
 test("failure counts and reset are deterministic", () => {
   game.createSession();
   game.selectRole("xiaodan");
+  for (const stageId of ["leather", "draft"]) {
+    assert.equal(game.enterStage(stageId), true);
+    assert.equal(game.completeStage(stageId), true);
+  }
+  assert.equal(game.failStage("trace"), 0);
+  assert.equal(game.enterStage("trace"), true);
   assert.equal(game.failStage("trace"), 1);
   assert.equal(game.failStage("trace"), 2);
   assert.equal(game.getSnapshot().attemptsByStage.trace, 2);
+  assert.equal(game.recordStageProgress("trace", 64), 64);
+  assert.equal(game.recordStageProgress("trace", 40), 64);
+  assert.equal(game.recordStageProgress("carve", 80), false);
+  assert.equal(game.completeStage("carve"), false);
   game.resetGame();
   assert.deepEqual(game.getSnapshot().completedStageIds, []);
   assert.equal(game.getSnapshot().selectedRole, "");
+  assert.deepEqual(game.getSnapshot().progressByStage, {});
+});
+
+test("entering a stale or future stage never changes progression", () => {
+  game.createSession();
+  game.selectRole("xiaodan");
+  assert.equal(game.enterStage("draft"), false);
+  assert.equal(game.completeStage("draft"), false);
+  assert.equal(game.recordStageProgress("draft", 100), false);
+  assert.equal(game.getSnapshot().activeStage.id, "leather");
 });

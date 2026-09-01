@@ -2,6 +2,10 @@
   "name": "shadowplay-miniprogram",
   "private": true,
   "scripts": {
-    "check": "node scripts/check-syntax.js && node --test tests/*.test.js && node scripts/check-experience-copy.js && node scripts/check-experience-residue.js && node scripts/check-media-size.js"
+    "check": "node scripts/check-syntax.js && node --test tests/*.test.js && node scripts/check-experience-copy.js && node scripts/check-experience-residue.js && node scripts/check-experience-resources.js && node scripts/check-media-size.js",
+    "devtools:smoke": "node scripts/devtools-smoke.js"
+  },
+  "devDependencies": {
+    "miniprogram-automator": "0.12.1"
   }
 }

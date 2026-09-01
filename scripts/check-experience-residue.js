@@ -28,4 +28,13 @@ for (const file of sourceFiles("miniprogram")) {
   const token = residueTokens.find((candidate) => contents.includes(candidate));
   if (token) throw new Error(`legacy source remains: ${file} (${token})`);
 }
+for (const forbidden of ["placeholder", "experience-v2", "test3D4WeMi", "工程车"]) {
+  for (const file of [
+    ...sourceFiles("miniprogram/pages/experience"),
+    ...sourceFiles("miniprogram/experience2d"),
+    ...sourceFiles("miniprogram/experiencexr"),
+  ]) {
+    if (fs.readFileSync(file, "utf8").includes(forbidden)) throw new Error(`forbidden experience token remains: ${file} (${forbidden})`);
+  }
+}
 console.log("LEGACY_RESIDUE_OK");

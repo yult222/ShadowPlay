@@ -4,14 +4,16 @@ const { COPY_ALLOWLIST } = require("../miniprogram/data/experience");
 
 const roots = [
   "miniprogram/pages/experience",
+  "miniprogram/experience2d",
+  "miniprogram/experiencexr",
   "miniprogram/components/experience-shell",
   "miniprogram/components/experience-progress",
   "miniprogram/components/experience-process",
   "miniprogram/components/common-popup",
-  "miniprogram/components/drag-snap-stage",
 ];
 
 function filesUnder(root, output = []) {
+  if (!fs.existsSync(root)) return output;
   for (const entry of fs.readdirSync(root, { withFileTypes: true })) {
     const target = path.join(root, entry.name);
     if (entry.isDirectory()) filesUnder(target, output);
