@@ -79,3 +79,30 @@ test("craft-canvas maps a phone touch to the puppet image before emitting select
   assert.ok(selected.detail.x >= 0 && selected.detail.x <= 1);
   assert.ok(selected.detail.y >= 0 && selected.detail.y <= 1);
 });
+
+test("craft-canvas visible hint is a real tap target", () => {
+  const definition = loadComponent("../miniprogram/experiencegame/components/craft-canvas/index.js");
+  const hints = [{ id: "yellow", x: 0.5, y: 0.17, completed: false }];
+  const component = instanceOf(definition, { baseWidth: 768, baseHeight: 1152, hints });
+  component.data.imageFrame = { left: 20, top: 30, width: 240, height: 360 };
+  component.updateHitHints(hints);
+
+  component.selectHint({ currentTarget: { dataset: { index: 0 } } });
+
+  assert.deepEqual(component.events.find((event) => event.name === "select"), {
+    name: "select",
+    detail: { x: 0.5, y: 0.17, source: "hint" },
+  });
+});
+
+test("craft-canvas completed hint cannot be triggered twice", () => {
+  const definition = loadComponent("../miniprogram/experiencegame/components/craft-canvas/index.js");
+  const hints = [{ id: "red", x: 0.5, y: 0.4, completed: true }];
+  const component = instanceOf(definition, { hints });
+  component.data.imageFrame = { left: 0, top: 0, width: 200, height: 300 };
+  component.updateHitHints(hints);
+
+  component.selectHint({ currentTarget: { dataset: { index: 0 } } });
+
+  assert.equal(component.events.some((event) => event.name === "select"), false);
+});

@@ -2,8 +2,8 @@
   <image class="craft-base {{baseClass}}" src="{{baseImage}}" mode="aspectFit" />
   <view class="craft-reveal-frame" style="{{imageFrameStyle}}">
     <image wx:for="{{revealLayers}}" wx:key="key" class="craft-reveal {{baseClass}}" src="{{baseImage}}" mode="scaleToFill" style="-webkit-clip-path:{{item.clip}};clip-path:{{item.clip}}" />
-    <view wx:for="{{hints}}" wx:key="id" class="craft-hint {{item.completed ? 'completed' : ''}} {{item.tone}}" style="left:{{item.x * 100}}%;top:{{item.y * 100}}%"><view></view></view>
   </view>
   <view id="craft-surface" class="craft-surface" catchtouchstart="select" aria-role="button" aria-label="{{stageId}}"></view>
+  <view wx:for="{{hitHints}}" wx:key="id" class="craft-hint {{item.completed ? 'completed' : ''}} {{item.available ? 'available' : 'inactive'}} {{item.tone}}" data-index="{{item.index}}" style="left:{{item.left}}px;top:{{item.top}}px" catchtap="selectHint" aria-role="button" aria-label="{{stageId}}"><view></view></view>
   <slot></slot>
 </view>

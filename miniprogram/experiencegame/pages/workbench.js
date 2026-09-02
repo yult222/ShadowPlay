@@ -27,7 +27,15 @@ function tapHints(stageId, state) {
   }
   if (stageId === "color") {
     const completed = new Set(state.filledColorIds || []);
-    return COLOR_GROUPS.map((group) => ({ id: group.id, x: group.points[0].x, y: group.points[0].y, completed: completed.has(group.id), tone: group.colorId }));
+    const selectedColor = state.selectedColor || "red";
+    return COLOR_GROUPS.map((group) => ({
+      id: group.id,
+      x: group.points[0].x,
+      y: group.points[0].y,
+      completed: completed.has(group.id),
+      available: group.colorId === selectedColor,
+      tone: group.colorId,
+    }));
   }
   return [];
 }
@@ -201,7 +209,12 @@ Page({
     if (detail.kind === "light") { this.stageState.phase = "move"; this.checkpoint(50, { phase: "move" }); this.setData({ activePhase: "move" }); return; }
     if (detail.kind === "light-test") { this.stageState.silhouette = true; this.setData({ silhouette: true }); this.checkpoint(100, { phase: "done", silhouette: true }); setTimeout(() => this.complete(), 900); }
   },
-  chooseColor(event) { const selectedColor = event.currentTarget.dataset.id; this.stageState.selectedColor = selectedColor; this.setData({ selectedColor }); this.checkpoint(Number(this.snapshot.progressByStage.color || 0), { selectedColor }); },
+  chooseColor(event) {
+    const selectedColor = event.currentTarget.dataset.id;
+    this.stageState.selectedColor = selectedColor;
+    this.setData({ selectedColor, tapHints: tapHints("color", this.stageState), canvasTone: "" });
+    this.checkpoint(Number(this.snapshot.progressByStage.color || 0), { selectedColor });
+  },
   selectCanvas(event) {
     const point = event.detail; const id = this.data.activeStageId; if (!["carve", "color"].includes(id)) return; if (id === "color") { this.selectColorRegion(point); return; }
     const selected = this.stageState.selectedGroups || []; const targetId = pickTapTarget(point, CRAFT_TAP_TARGETS.carve, selected, 0.20);

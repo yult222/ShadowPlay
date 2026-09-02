@@ -16,7 +16,7 @@
           </free-drag>
           <craft-canvas wx:if="{{activeStageId === 'carve' || activeStageId === 'color'}}" id="craft-canvas" stageId="{{activeStageId}}" baseImage="/images/experience-v3/xiaodan-anchor.webp" baseClass="{{canvasBaseClass}}" revealLayers="{{revealLayers}}" hints="{{tapHints}}" tone="{{canvasTone}}" bind:select="selectCanvas">
             <view wx:if="{{activeStageId === 'color'}}" class="palette" aria-role="group">
-              <view wx:for="{{palette}}" wx:key="id" class="palette-color {{selectedColor === item.id ? 'selected' : ''}} {{recommendedColor === item.id ? 'recommended' : ''}}" data-id="{{item.id}}" style="background:{{item.value}}" bindtap="chooseColor" aria-role="button" aria-label="{{item.label}}" aria-checked="{{selectedColor === item.id}}"><text>{{item.label}}</text></view>
+              <view wx:for="{{palette}}" wx:key="id" class="palette-color {{item.id}} {{selectedColor === item.id ? 'selected' : ''}} {{recommendedColor === item.id ? 'recommended' : ''}}" data-id="{{item.id}}" style="background:{{item.value}}" bindtap="chooseColor" aria-role="button" aria-label="{{item.label}}" aria-checked="{{selectedColor === item.id}}"><text>{{item.label}}</text></view>
             </view>
           </craft-canvas>
         </block>
