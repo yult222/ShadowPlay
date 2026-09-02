@@ -1,15 +1,15 @@
 <experience-shell title="{{copy.roleTitle}}" showBack="{{true}}" backLabel="{{copy.back}}" bind:back="back">
-  <view class="role-primary {{selected ? 'selected' : ''}}" bindtap="selectXiaodan">
+  <view class="role-primary selected" aria-label="{{copy.xiaodan}}">
     <view class="role-paper"></view>
     <image src="/images/experience-v3/xiaodan-anchor.webp" mode="aspectFit" />
     <view class="role-name">{{copy.xiaodan}}</view>
   </view>
   <view class="role-locked-row">
-    <view class="role-locked">
+    <view class="role-locked" aria-disabled="true">
       <image src="/images/experience-v3/wusheng-card.webp" mode="aspectFill" />
       <view class="role-lock-shade"></view><view class="role-lock-copy"><text>{{copy.wusheng}}</text><text>{{copy.comingSoon}}</text></view>
     </view>
-    <view class="role-locked">
+    <view class="role-locked" aria-disabled="true">
       <image src="/images/experience-v3/chou-card.webp" mode="aspectFill" />
       <view class="role-lock-shade"></view><view class="role-lock-copy"><text>{{copy.chou}}</text><text>{{copy.comingSoon}}</text></view>
     </view>

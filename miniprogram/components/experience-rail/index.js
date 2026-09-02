@@ -8,7 +8,7 @@ Component({
     toggle() { this.triggerEvent("toggle"); },
     select(event) {
       const item = this.properties.stages[Number(event.currentTarget.dataset.index)];
-      if (item && item.status === "active") this.triggerEvent("stage", { id: item.id });
+      if (item && item.status !== "locked") this.triggerEvent("stage", { id: item.id, status: item.status });
     },
   },
 });

@@ -1,8 +1,14 @@
 Component({
   properties: { stageId: String, phase: String, completed: Boolean },
   data: { rods: [{ id: "left", position: "-1.55 -0.95 0.16" }, { id: "center", position: "0 -1.15 0.16" }, { id: "right", position: "1.55 -0.95 0.16" }] },
+  lifetimes: {
+    attached() { this.loadTimer = setTimeout(() => this.fallback(), 3200); },
+    detached() { if (this.loadTimer) clearTimeout(this.loadTimer); },
+  },
   methods: {
-    ready() { this.triggerEvent("ready"); }, loaded() { this.triggerEvent("loaded"); }, fallback() { this.triggerEvent("fallback"); },
+    ready() { this.triggerEvent("ready"); },
+    loaded() { if (this.loadTimer) clearTimeout(this.loadTimer); this.loadTimer = null; this.triggerEvent("loaded"); },
+    fallback() { if (this.failed) return; this.failed = true; if (this.loadTimer) clearTimeout(this.loadTimer); this.loadTimer = null; this.triggerEvent("fallback"); },
     point(detail) {
       const value = detail && detail.value; if (!value || !value.camera || !value.dir || !value.camera.el) return null;
       const position = value.camera.el._components.transform.worldPosition; const factor = (0.14 - position.z) / value.dir[2];

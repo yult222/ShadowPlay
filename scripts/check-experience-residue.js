@@ -1,6 +1,9 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const { spawnSync } = require("node:child_process");
+const {
+  STAGES, DRAFT_PIECES, CRAFT_TAP_TARGETS, COLOR_GROUPS, PART_SEPARATION_GROUPS, JOINT_DEMOS,
+} = require("../miniprogram/data/experience");
 
 const removedPaths = ["素材.zip", "素材", "坐标表.xlsx", "pages/experience", "miniprogram/images/experience"];
 for (const target of removedPaths) {
@@ -52,4 +55,24 @@ if (craftSurface.includes("catchtouchmove") || craftSurface.includes("strokemove
 if (workbenchLogic.includes("drawPaths") || workbenchLogic.includes("canvasGuides")) throw new Error("independent guide line remains");
 const rail = fs.readFileSync("miniprogram/components/experience-rail/index.wxml", "utf8");
 if (!rail.includes('wx:for="{{stages}}"')) throw new Error("nine-stage rail is not data-driven");
+if (STAGES.length !== 9 || STAGES.some((stage) => !["tap", "drag"].includes(stage.gesture))) throw new Error("stage gestures are incomplete or unsupported");
+if (CRAFT_TAP_TARGETS.draft || CRAFT_TAP_TARGETS.trace) throw new Error("draft or trace regressed to invisible tap targets");
+const minimumActions = 1 + DRAFT_PIECES.length + 1 + CRAFT_TAP_TARGETS.carve.length
+  + COLOR_GROUPS.length * 2 + PART_SEPARATION_GROUPS.length + JOINT_DEMOS.length + 1 + 4 + 2;
+if (minimumActions > 35) throw new Error(`core interaction budget regressed: ${minimumActions}`);
+const helpLogic = fs.readFileSync("miniprogram/experience2d/pages/help.js", "utf8");
+if (helpLogic.includes("GESTURES")) throw new Error("help gestures are no longer sourced from the stage configuration");
+if (!workbenchLogic.includes("previewStageId") || !workbenchLogic.includes("status.status === \"completed\"")) throw new Error("completed-stage rail preview is missing");
+const xrStage = fs.readFileSync("miniprogram/experiencegame/components/xr-stage/index.js", "utf8");
+if (!xrStage.includes("loadTimer") || !xrStage.includes("fallback")) throw new Error("XR timeout fallback is missing");
+for (const file of [
+  ...sourceFiles("miniprogram/pages/experience"), ...sourceFiles("miniprogram/experience2d"), ...sourceFiles("miniprogram/experiencegame"),
+  ...sourceFiles("miniprogram/components/experience-shell"), ...sourceFiles("miniprogram/components/experience-button"),
+  ...sourceFiles("miniprogram/components/experience-rail"), ...sourceFiles("miniprogram/components/common-popup"),
+]) {
+  if (path.extname(file) !== ".wxss") continue;
+  const contents = fs.readFileSync(file, "utf8");
+  if (/font-size:2[0-7]rpx/.test(contents)) throw new Error(`small experience text remains: ${file}`);
+  if (/\[[^\]]*(?:disabled|aria-)/.test(contents)) throw new Error(`unsupported component attribute selector remains: ${file}`);
+}
 console.log("LEGACY_RESIDUE_OK");

@@ -1,6 +1,6 @@
 <view wx:if="{{visible}}" class="popup-layer" catchtouchmove="noop">
   <view class="popup-backdrop" bindtap="onClose"></view>
-  <view class="popup-sheet">
+  <view class="popup-sheet" aria-role="dialog" aria-label="{{title}}">
     <view class="popup-title">{{title}}</view>
     <view class="setting-row"><text>{{sfxLabel}}</text><switch color="#A62B23" checked="{{sfxEnabled}}" bindchange="onSfx" /></view>
     <view class="setting-row"><text>{{bgmLabel}}</text><switch color="#A62B23" checked="{{bgmEnabled}}" bindchange="onBgm" /></view>

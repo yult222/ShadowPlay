@@ -1,1 +1,1 @@
-<button class="experience-button {{variant}}" disabled="{{disabled}}" bindtap="activate">{{label}}</button>
+<button class="experience-button {{variant}} {{disabled ? 'is-disabled' : ''}}" disabled="{{disabled}}" bindtap="activate" aria-label="{{label}}">{{label}}</button>

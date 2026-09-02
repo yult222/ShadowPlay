@@ -1,7 +1,7 @@
 <view class="free-drag" style="width:{{width}}px;height:{{height}}px">
   <slot></slot>
-  <view wx:for="{{targets}}" wx:key="id" class="drag-target {{item.kind}} {{item.glow ? 'glow' : ''}}" style="left:{{item.x}}px;top:{{item.y}}px;width:{{item.width}}px;height:{{item.height}}px"></view>
-  <view wx:for="{{localItems}}" wx:key="id" class="drag-piece {{item.kind}} {{item.fixed ? 'fixed' : ''}} {{item.done ? 'done' : ''}} {{item.rebound ? 'rebound' : ''}}" data-index="{{index}}" style="left:{{item.x}}px;top:{{item.y}}px;width:{{item.width}}px;height:{{item.height}}px" catchtouchstart="start" catchtouchmove="move" catchtouchend="end" catchtouchcancel="end">
+  <view wx:for="{{targets}}" wx:key="id" class="drag-target {{item.kind}} {{item.glow ? 'glow' : ''}}" data-id="{{item.id}}" style="left:{{item.x}}px;top:{{item.y}}px;width:{{item.width}}px;height:{{item.height}}px;{{item.kind === 'structure-target' ? 'border-color:rgba(118,75,39,.40);background:rgba(255,238,199,.15)' : ''}}"></view>
+  <view wx:for="{{localItems}}" wx:key="id" class="drag-piece {{item.kind}} {{item.fixed ? 'fixed' : ''}} {{item.done ? 'done' : ''}} {{item.rebound ? 'rebound' : ''}}" data-index="{{index}}" data-id="{{item.id}}" style="left:{{item.x}}px;top:{{item.y}}px;width:{{item.width}}px;height:{{item.height}}px" catchtouchstart="start" catchtouchmove="move" catchtouchend="end" catchtouchcancel="cancel" aria-role="button" aria-label="{{item.label || item.id}}" aria-disabled="{{item.fixed}}">
     <image wx:if="{{item.image}}" src="{{item.image}}" mode="aspectFit" />
     <view wx:if="{{item.label}}" class="piece-label">{{item.label}}</view>
   </view>

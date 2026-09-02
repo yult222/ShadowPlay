@@ -18,6 +18,8 @@ test("game completes all nine stages without skipping", () => {
   game.selectRole("xiaodan");
   for (const [index, stage] of STAGES.entries()) {
     assert.equal(game.enterStage(stage.id), true);
+    assert.equal(game.completeStage(stage.id), false);
+    assert.equal(game.recordStageProgress(stage.id, 100, { completedByGesture: true }), 100);
     const outcome = game.completeStage(stage.id);
     assert.equal(outcome.completed, true);
     assert.equal(outcome.finished, index === STAGES.length - 1);
@@ -35,6 +37,7 @@ test("failure counts and reset are deterministic", () => {
   game.selectRole("xiaodan");
   for (const stageId of ["leather", "draft"]) {
     assert.equal(game.enterStage(stageId), true);
+    assert.equal(game.recordStageProgress(stageId, 100), 100);
     assert.equal(game.completeStage(stageId).completed, true);
   }
   assert.equal(game.failStage("trace"), 0);
@@ -70,4 +73,13 @@ test("entering a stale or future stage never changes progression", () => {
   assert.equal(game.completeStage("draft"), false);
   assert.equal(game.recordStageProgress("draft", 100), false);
   assert.equal(game.getSnapshot().activeStage.id, "leather");
+});
+
+test("a stage cannot complete before its gesture progress reaches one hundred", () => {
+  game.createSession(); game.selectRole("xiaodan"); assert.equal(game.enterStage("leather"), true);
+  assert.equal(game.recordStageProgress("leather", 99, { selected: "B" }), 99);
+  assert.equal(game.completeStage("leather"), false);
+  assert.equal(game.getSnapshot().activeStage.id, "leather");
+  assert.equal(game.recordStageProgress("leather", 100, { selected: "B" }), 100);
+  assert.equal(game.completeStage("leather").nextStageId, "draft");
 });

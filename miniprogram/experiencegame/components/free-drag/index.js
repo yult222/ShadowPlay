@@ -36,6 +36,11 @@ Component({
       this.setData({ active: null });
       this.triggerEvent("drop", { itemId: item.id, targetId: target ? target.id : "", x: center.x / this.properties.width, y: center.y / this.properties.height });
     },
+    cancel() {
+      const active = this.data.active; if (!active) return;
+      const item = this.data.localItems[active.index];
+      this.setData({ active: null, [`localItems[${active.index}].x`]: item.startX, [`localItems[${active.index}].y`]: item.startY });
+    },
     resolveDrop(itemId, result = {}) {
       const index = this.data.localItems.findIndex((item) => item.id === itemId); if (index < 0) return;
       const item = { ...this.data.localItems[index] };

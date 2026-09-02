@@ -2,20 +2,25 @@
   <view class="workbench-page" style="--board-top:{{boardTop}}px">
     <image class="workbench-bg" src="/images/experience-v3/workbench-portrait.webp" mode="aspectFill" />
     <view class="workbench-shade"></view>
-    <view class="board {{transitioning ? 'transitioning' : ''}}" style="top:{{boardTop}}px;width:{{boardWidth}}px;height:{{boardHeight}}px">
-      <experience-rail stages="{{stages}}" expanded="{{railExpanded}}" progress="{{progress}}" bind:toggle="toggleRail" bind:stage="selectRail" />
+    <view class="board {{transitioning ? 'transitioning' : ''}} {{stageComplete ? 'stage-complete' : ''}}" style="top:{{boardTop}}px;width:{{boardWidth}}px;height:{{boardHeight}}px">
+      <experience-rail id="process-rail" stages="{{stages}}" expanded="{{railExpanded}}" progress="{{progress}}" bind:toggle="toggleRail" bind:stage="selectRail" />
       <view class="stage-layer">
-        <xr-stage wx:if="{{xrEnabled}}" stageId="{{activeStageId}}" phase="{{activePhase}}" completed="{{silhouette}}" bind:fallback="xrFallback" bind:action="xrAction" />
-        <free-drag wx:elif="{{activeStageId === 'leather' || activeStageId === 'parts' || activeStageId === 'joint' || activeStageId === 'rods' || activeStageId === 'light'}}" id="drag-stage" items="{{dragItems}}" targets="{{dragTargets}}" width="{{boardWidth}}" height="{{boardHeight}}" bind:drop="onDrop">
-          <image wx:if="{{activeStageId === 'joint' || activeStageId === 'rods'}}" class="assembled-ghost" src="/images/experience-v3/xiaodan-anchor.webp" mode="aspectFit" />
-          <view wx:if="{{activeStageId === 'light'}}" class="light-screen {{silhouette ? 'complete' : ''}}"></view>
-          <image wx:if="{{activeStageId === 'light' && lightPhase !== 'puppet'}}" class="light-puppet {{silhouette ? 'silhouette' : ''}}" src="/images/experience-v3/xiaodan-anchor.webp" mode="aspectFit" />
-        </free-drag>
-        <craft-canvas wx:if="{{activeStageId === 'draft' || activeStageId === 'trace' || activeStageId === 'carve' || activeStageId === 'color'}}" id="craft-canvas" stageId="{{activeStageId}}" baseImage="/images/experience-v3/xiaodan-anchor.webp" baseClass="{{canvasBaseClass}}" revealLayers="{{revealLayers}}" tone="{{canvasTone}}" bind:select="selectCanvas">
-          <view wx:if="{{activeStageId === 'color'}}" class="palette">
-            <view wx:for="{{palette}}" wx:key="id" class="palette-color {{selectedColor === item.id ? 'selected' : ''}} {{recommendedColor === item.id ? 'recommended' : ''}}" data-id="{{item.id}}" style="background:{{item.value}}" bindtap="chooseColor"><text>{{item.label}}</text></view>
-          </view>
-        </craft-canvas>
+        <view wx:if="{{previewStageId}}" class="stage-preview" aria-role="image" aria-label="{{activeTitle}}"><image src="{{previewArt}}" mode="aspectFit" /></view>
+        <block wx:else>
+          <xr-stage wx:if="{{xrEnabled}}" stageId="{{activeStageId}}" phase="{{activePhase}}" completed="{{silhouette}}" bind:fallback="xrFallback" bind:action="xrAction" />
+          <free-drag wx:elif="{{activeStageId === 'leather' || activeStageId === 'draft' || activeStageId === 'trace' || activeStageId === 'parts' || activeStageId === 'joint' || activeStageId === 'rods' || activeStageId === 'light'}}" id="drag-stage" items="{{dragItems}}" targets="{{dragTargets}}" width="{{boardWidth}}" height="{{boardHeight}}" bind:drop="onDrop">
+            <image wx:if="{{activeStageId === 'draft' || activeStageId === 'trace' || activeStageId === 'parts' || activeStageId === 'joint' || activeStageId === 'rods'}}" class="assembled-ghost {{activeStageId}}" style="opacity:{{activeStageId === 'draft' ? 0.24 : activeStageId === 'trace' ? 0.30 : activeStageId === 'parts' ? 0.38 : 0.28}}" src="/images/experience-v3/xiaodan-anchor.webp" mode="aspectFit" />
+            <image wx:if="{{activeStageId === 'trace' && traceTransferred}}" class="trace-result" src="/images/experience-v3/xiaodan-anchor.webp" mode="aspectFit" />
+            <view wx:if="{{activeStageId === 'light'}}" class="light-screen {{silhouette ? 'complete' : ''}}"></view>
+            <image wx:if="{{activeStageId === 'light' && lightPhase !== 'puppet'}}" class="light-puppet {{silhouette ? 'silhouette' : ''}}" src="/images/experience-v3/xiaodan-anchor.webp" mode="aspectFit" />
+          </free-drag>
+          <craft-canvas wx:if="{{activeStageId === 'carve' || activeStageId === 'color'}}" id="craft-canvas" stageId="{{activeStageId}}" baseImage="/images/experience-v3/xiaodan-anchor.webp" baseClass="{{canvasBaseClass}}" revealLayers="{{revealLayers}}" hints="{{tapHints}}" tone="{{canvasTone}}" bind:select="selectCanvas">
+            <view wx:if="{{activeStageId === 'color'}}" class="palette" aria-role="group">
+              <view wx:for="{{palette}}" wx:key="id" class="palette-color {{selectedColor === item.id ? 'selected' : ''}} {{recommendedColor === item.id ? 'recommended' : ''}}" data-id="{{item.id}}" style="background:{{item.value}}" bindtap="chooseColor" aria-role="button" aria-label="{{item.label}}" aria-checked="{{selectedColor === item.id}}"><text>{{item.label}}</text></view>
+            </view>
+          </craft-canvas>
+        </block>
+        <view class="completion-light"></view>
       </view>
     </view>
   </view>

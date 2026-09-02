@@ -7,8 +7,8 @@
       <view class="entry-actions">
         <experience-button class="entry-primary" label="{{copy.start}}" variant="primary" bind:tap="start" />
         <view class="entry-secondary-row">
-          <view class="entry-secondary-tag" bindtap="openGallery">{{copy.gallery}}</view>
-          <view class="entry-secondary-tag" bindtap="openHelp">{{copy.help}}</view>
+          <view class="entry-secondary-tag" bindtap="openGallery" aria-role="button" aria-label="{{copy.gallery}}">{{copy.gallery}}</view>
+          <view class="entry-secondary-tag" bindtap="openHelp" aria-role="button" aria-label="{{copy.help}}">{{copy.help}}</view>
         </view>
       </view>
     </view>

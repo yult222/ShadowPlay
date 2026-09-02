@@ -64,7 +64,8 @@ function recordStageProgress(stageId, value, patch) {
 
 function completeStage(stageId) {
   const active = getActiveStage();
-  if (!active || active.id !== stageId || session.currentStageId !== stageId || session.completedStageIds.includes(stageId)) {
+  if (!active || active.id !== stageId || session.currentStageId !== stageId
+    || session.completedStageIds.includes(stageId) || Number(session.progressByStage[stageId] || 0) < 100) {
     return false;
   }
   session.completedStageIds.push(stageId);

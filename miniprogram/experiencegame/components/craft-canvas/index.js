@@ -8,6 +8,7 @@ Component({
     baseWidth: { type: Number, value: 768 },
     baseHeight: { type: Number, value: 1152 },
     revealLayers: { type: Array, value: [] },
+    hints: { type: Array, value: [] },
     tone: String,
   },
   data: { rect: null, imageFrameStyle: "" },
